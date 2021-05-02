@@ -1,0 +1,34 @@
+arch-chroot /mnt /bin/bash << EOF
+  su $USER_NAME
+
+  cd ~
+
+  echo "$USER_PASSWORD" | sudo -S pacman --noconfirm -S $GRAPHICAL_PACKAGES
+
+  # Clones my dotfiles
+  git clone https://github.com/henriquehbr/dotfiles
+
+  # Deploy dotfiles
+  (cd dotfiles ; git submodule update --init --recursive ; ./deploy)
+
+  # Installs st from source
+  (cd .config/st ; echo "$USER_PASSWORD" | sudo -S make clean install)
+
+  # Clones yay repository
+  git clone https://aur.archlinux.org/yay-bin.git
+
+  # Installs yay from source
+  (cd yay-bin ; makepkg --noconfirm -si)
+
+  # Downloads nerd-fonts-mononoki
+  echo "$USER_PASSWORD" | yay --sudoflags -S --noconfirm -S nerd-fonts-mononoki
+
+  # Installs extra graphical packages
+  echo "$USER_PASSWORD" | yay --sudoflags -S --noconfirm -S $EXTRA_GRAPHICAL_PACKAGES
+
+  # Run networkmanager on boot
+  echo "$USER_PASSWORD" | sudo -S systemctl enable netctl
+
+  # Sync time with network
+  echo "$USER_PASSWORD" | sudo -S timedatectl set-ntp true
+EOF

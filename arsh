@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#  _     _          
+# | |   | |           Henrique Borges (henriquehbr)
+# | |__ | |__  _ __   https://github.com/henriquehbr
+# | '_ \| '_ \| '__|  https://henriquehbr.dev
+# | | | | |_) | |     https://reddit.com/u/henriquehbr
+# |_| |_|_.__/|_|
+
+# Insert "mirrors" after "bootloader"
+MODULES=(
+  "variables"
+  "validate-config"
+  "partitioning"
+  "formatting"
+  "mirrors"
+  "install-packages"
+  "generate-fs-table"
+  "timezone"
+  "locales"
+  "hostname"
+  "users"
+  "bootloader"
+  "extra"
+  "post-install"
+)
+
+MODULES=$(IFS=, ; echo "${MODULES[*]}")
+
+curl -s "192.168.15.3:8080/config" > config
+curl -s "192.168.15.3:8080/{$MODULES}" >> arsh
+
+chmod +x arsh
+
+source config
+source arsh

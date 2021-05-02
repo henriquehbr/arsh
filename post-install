@@ -1,0 +1,24 @@
+umount -l /mnt
+
+action=$(
+  whiptail \
+    --title "Installation finished" \
+    --menu "What do you want to do now?" \
+    0 0 0 \
+    "Power off" "" \
+    "Reboot" "" \
+    "Exit script" "" \
+    3>&1 1>&2 2>&3
+)
+
+case $action in
+  "Power off")
+    shutdown now
+    ;;
+  "Reboot")
+    reboot
+    ;;
+  *)
+    exit 0
+    ;;
+esac

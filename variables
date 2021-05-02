@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Exit in case of any errors on subshells
+set -e
+
+#  _     _
+# | |   | |           Henrique Borges (henriquehbr)
+# | |__ | |__  _ __   https://github.com/henriquehbr
+# | '_ \| '_ \| '__|  https://henriquehbr.dev
+# | | | | |_) | |     https://reddit.com/u/henriquehbr
+# |_| |_|_.__/|_|
+
+# Ignores both errors and output of `lscpu`
+if lscpu | grep GenuineIntel > /dev/null 2>&1; then
+  CPU='intel'
+else
+  CPU='amd'
+fi
+
+# Required in order to ensure system stability
+CPU_PACKAGE="${CPU}-ucode"
+
+BOOTLOADER_PACKAGES="grub dosfstools os-prober mtools efibootmgr"
+ESSENTIAL_PACKAGES="base linux linux-firmware $CPU_PACKAGE"
+INTERNET_PACKAGES="netctl wpa_supplicant"
+DEVELOPMENT_PACKAGES="base-devel git vim unzip stow"
+GRAPHICAL_PACKAGES="xf86-video-fbdev xorg xorg-xinit firefox"
+EXTRA_GRAPHICAL_PACKAGES="bspwm sxhkd lemonbar xdo xtitle dmenu dialog"
+
+ARSH_BOOT_PARTITION=/dev/sda1
+ARSH_SWAP_PARTITION=/dev/sda2
+ARSH_ROOT_PARTITION=/dev/sda3

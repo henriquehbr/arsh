@@ -1,0 +1,13 @@
+arch-chroot /mnt /bin/bash << EOF
+  # Set localization
+  sed -i "s/#${LOCALE}/${LOCALE}/" /etc/locale.gen
+
+  # Generates locales
+  locale-gen
+
+  # Persist console keymap after reboots
+  echo "KEYMAP=$KEYMAP" > /etc/vconsole.conf
+
+  # Persist language after reboots
+  echo "LANG=$LOCALE" | cut -d " " -f 1 > /etc/locale.conf
+EOF

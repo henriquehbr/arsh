@@ -1,0 +1,21 @@
+arch-chroot /mnt /bin/bash << EOF
+  sed -i "s/autodetect modconf/autodetect keyboard keymap modconf/" /etc/mkinitcpio.conf
+  sed -i "s/modconf block/modconf block encrypt/" /etc/mkinitcpio.conf
+
+  mkinitcpio -p linux
+
+  # Installs grub (with flags for EFI)
+  grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
+
+  # Generates grub config files
+  grub-mkconfig -o /boot/grub/grub.cfg
+
+  ENCRYPTED_PARTITION_UUID=$(blkid -o value $ARSH_ROOT_PARTITION | head -n 1)
+  GRUB_OLD_STRING="GRUB_CMDLINE_LINUX=\"\""
+  GRUB_KERNEL_PARAMETERS="cryptdevice=UUID=\$ENCRYPTED_PARTITION_UUID:$ENCRYPTED_PARTITION_NAME root=/dev/mapper/$ENCRYPTED_PARTITION_NAME"
+  GRUB_NEW_STRING="GRUB_CMDLINE_LINUX=\"\$GRUB_KERNEL_PARAMETERS\""
+  sed -i "s|\$GRUB_OLD_STRING|\$GRUB_NEW_STRING|" /etc/default/grub
+
+  # Generates grub config files
+  grub-mkconfig -o /boot/grub/grub.cfg
+EOF
