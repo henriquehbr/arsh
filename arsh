@@ -27,8 +27,8 @@ MODULES=(
 
 MODULES=$(IFS=, ; echo "${MODULES[*]}")
 
-curl -s "192.168.15.3:8080/config" > config
-curl -s "192.168.15.3:8080/{$MODULES}" >> arsh
+curl -s "git.io/J3BJ9/config" > config
+curl -s "git.io/J3BJ9/{$MODULES}" >> arsh
 
 chmod +x arsh
 
