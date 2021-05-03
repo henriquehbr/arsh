@@ -22,7 +22,7 @@ CPU_PACKAGE="${CPU}-ucode"
 
 BOOTLOADER_PACKAGES="grub dosfstools os-prober mtools efibootmgr"
 ESSENTIAL_PACKAGES="base linux linux-firmware $CPU_PACKAGE"
-INTERNET_PACKAGES="netctl wpa_supplicant"
+INTERNET_PACKAGES="networkmanager wpa_supplicant"
 DEVELOPMENT_PACKAGES="base-devel git vim unzip stow"
 GRAPHICAL_PACKAGES="xf86-video-fbdev xorg xorg-xinit firefox"
 EXTRA_GRAPHICAL_PACKAGES="bspwm sxhkd lemonbar xdo xtitle dmenu dialog"

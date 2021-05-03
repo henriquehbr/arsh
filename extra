@@ -27,7 +27,7 @@ arch-chroot /mnt /bin/bash << EOF
   echo "$USER_PASSWORD" | yay --sudoflags -S --noconfirm -S $EXTRA_GRAPHICAL_PACKAGES
 
   # Run networkmanager on boot
-  echo "$USER_PASSWORD" | sudo -S systemctl enable netctl
+  echo "$USER_PASSWORD" | sudo -S systemctl enable NetworkManager
 
   # Sync time with network
   echo "$USER_PASSWORD" | sudo -S timedatectl set-ntp true
