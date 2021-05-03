@@ -3,7 +3,9 @@ arch-chroot /mnt /bin/bash << EOF
 
   cd ~
 
-  echo "$USER_PASSWORD" | sudo -S pacman --noconfirm -S $GRAPHICAL_PACKAGES
+  while ! pacman -Q $GRAPHICAL_PACKAGES; do
+    echo "$USER_PASSWORD" | sudo -S pacman --noconfirm -S $GRAPHICAL_PACKAGES
+  done
 
   # Clones my dotfiles
   git clone https://github.com/henriquehbr/dotfiles
@@ -24,7 +26,9 @@ arch-chroot /mnt /bin/bash << EOF
   echo "$USER_PASSWORD" | yay --sudoflags -S --noconfirm -S nerd-fonts-mononoki
 
   # Installs extra graphical packages
-  echo "$USER_PASSWORD" | yay --sudoflags -S --noconfirm -S $EXTRA_GRAPHICAL_PACKAGES
+  while ! pacman -Q $EXTRA_GRAPHICAL_PACKAGES; do
+    echo "$USER_PASSWORD" | yay --sudoflags -S --noconfirm -S $EXTRA_GRAPHICAL_PACKAGES
+  done
 
   # Run networkmanager on boot
   echo "$USER_PASSWORD" | sudo -S systemctl enable NetworkManager
