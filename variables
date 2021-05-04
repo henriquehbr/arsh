@@ -23,8 +23,10 @@ CPU_PACKAGE="${CPU}-ucode"
 BOOTLOADER_PACKAGES="grub dosfstools os-prober mtools efibootmgr"
 ESSENTIAL_PACKAGES="base linux linux-firmware $CPU_PACKAGE"
 INTERNET_PACKAGES="networkmanager wpa_supplicant"
-DEVELOPMENT_PACKAGES="base-devel git vim unzip stow"
-GRAPHICAL_PACKAGES="xf86-video-fbdev xorg xorg-xinit firefox"
+DEVELOPMENT_PACKAGES="git vim unzip stow"
+DEVELOPMENT_GROUP_PACKAGES="base-devel"
+GRAPHICAL_PACKAGES="xf86-video-fbdev xorg-xinit firefox"
+GRAHPICAL_GROUP_PACKAGES="xorg"
 EXTRA_GRAPHICAL_PACKAGES="bspwm sxhkd lemonbar xdo xtitle dmenu dialog"
 
 ARSH_BOOT_PARTITION=/dev/sda1

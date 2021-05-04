@@ -3,8 +3,8 @@ arch-chroot /mnt /bin/bash << EOF
 
   cd ~
 
-  while ! pacman -Qg $GRAPHICAL_PACKAGES; do
-    echo "$USER_PASSWORD" | sudo -S pacman --needed --noconfirm -S $GRAPHICAL_PACKAGES
+  while ! pacman -Qg $GRAPHICAL_GROUP_PACKAGES && pacman -Q $GRAPHICAL_PACKAGES; do
+    echo "$USER_PASSWORD" | sudo -S pacman --needed --noconfirm -S $GRAPHICAL_PACKAGES $GRAPHICAL_GROUP_PACKAGES
     wait
   done
 
