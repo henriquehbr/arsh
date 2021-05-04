@@ -25,9 +25,10 @@ ESSENTIAL_PACKAGES="base linux linux-firmware $CPU_PACKAGE"
 INTERNET_PACKAGES="networkmanager wpa_supplicant"
 DEVELOPMENT_PACKAGES="git vim unzip stow"
 DEVELOPMENT_GROUP_PACKAGES="base-devel"
-GRAPHICAL_PACKAGES="xf86-video-fbdev xorg-xinit firefox"
-GRAHPICAL_GROUP_PACKAGES="xorg"
-EXTRA_GRAPHICAL_PACKAGES="bspwm sxhkd lemonbar xdo xtitle dmenu dialog"
+
+EXTRA_OFFICIAL_PACKAGES="xf86-video-fbdev xorg-xinit dmenu dialog firefox"
+EXTRA_GROUP_PACKAGES="xorg"
+EXTRA_AUR_PACKAGES="bspwm sxhkd lemonbar xdo xtitle"
 
 ARSH_BOOT_PARTITION=/dev/sda1
 ARSH_SWAP_PARTITION=/dev/sda2

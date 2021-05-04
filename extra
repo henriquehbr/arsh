@@ -3,8 +3,8 @@ arch-chroot /mnt /bin/bash << EOF
 
   cd ~
 
-  while ! pacman -Qg $GRAPHICAL_GROUP_PACKAGES && pacman -Q $GRAPHICAL_PACKAGES; do
-    echo "$USER_PASSWORD" | sudo -S pacman --needed --noconfirm -S $GRAPHICAL_PACKAGES $GRAPHICAL_GROUP_PACKAGES
+  while ! pacman -Qg $EXTRA_GROUP_PACKAGES && pacman -Q $EXTRA_OFFICIAL_PACKAGES; do
+    echo "$USER_PASSWORD" | sudo -S pacman --needed --noconfirm -S $EXTRA_OFFICIAL_PACKAGES $EXTRA_GROUP_PACKAGES
     wait
   done
 
@@ -27,8 +27,8 @@ arch-chroot /mnt /bin/bash << EOF
   echo "$USER_PASSWORD" | yay --sudoflags -S --noconfirm -S nerd-fonts-mononoki
 
   # Installs extra graphical packages
-  while ! pacman -Q $EXTRA_GRAPHICAL_PACKAGES; do
-    echo "$USER_PASSWORD" | yay --sudoflags -S --noconfirm -S $EXTRA_GRAPHICAL_PACKAGES
+  while ! pacman -Q $EXTRA_AUR_PACKAGES; do
+    echo "$USER_PASSWORD" | yay --sudoflags -S --noconfirm -S $EXTRA_AUR_PACKAGES
     wait
   done
 
