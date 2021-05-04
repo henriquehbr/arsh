@@ -5,7 +5,7 @@ arch-chroot /mnt /bin/bash << EOF
   mkinitcpio -p linux
 
   # Installs grub (with flags for EFI)
-  grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
+  grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 
   # Generates grub config files
   grub-mkconfig -o /boot/grub/grub.cfg
