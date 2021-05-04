@@ -4,7 +4,8 @@ arch-chroot /mnt /bin/bash << EOF
   cd ~
 
   while ! pacman -Q $GRAPHICAL_PACKAGES; do
-    echo "$USER_PASSWORD" | sudo -S pacman --noconfirm -S $GRAPHICAL_PACKAGES
+    echo "$USER_PASSWORD" | sudo -S pacman --needed --noconfirm -S $GRAPHICAL_PACKAGES
+    wait
   done
 
   # Clones my dotfiles
@@ -28,6 +29,7 @@ arch-chroot /mnt /bin/bash << EOF
   # Installs extra graphical packages
   while ! pacman -Q $EXTRA_GRAPHICAL_PACKAGES; do
     echo "$USER_PASSWORD" | yay --sudoflags -S --noconfirm -S $EXTRA_GRAPHICAL_PACKAGES
+    wait
   done
 
   # Run networkmanager on boot
