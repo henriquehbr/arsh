@@ -20,15 +20,15 @@ fi
 # Required in order to ensure system stability
 CPU_PACKAGE="${CPU}-ucode"
 
-BOOTLOADER_PACKAGES="grub dosfstools os-prober mtools efibootmgr"
-ESSENTIAL_PACKAGES="base linux linux-firmware $CPU_PACKAGE"
-INTERNET_PACKAGES="networkmanager wpa_supplicant"
-DEVELOPMENT_PACKAGES="git vim unzip stow"
-DEVELOPMENT_GROUP_PACKAGES="base-devel"
+BOOTLOADER_PACKAGES=(grub dosfstools os-prober mtools efibootmgr)
+ESSENTIAL_PACKAGES=(base linux linux-firmware $CPU_PACKAGE)
+INTERNET_PACKAGES=(networkmanager wpa_supplicant)
+DEVELOPMENT_PACKAGES=(git vim unzip stow)
+DEVELOPMENT_GROUP_PACKAGES=(base-devel)
 
-EXTRA_OFFICIAL_PACKAGES="xf86-video-fbdev xorg-xinit dmenu dialog firefox"
-EXTRA_GROUP_PACKAGES="xorg"
-EXTRA_AUR_PACKAGES="bspwm sxhkd lemonbar xdo xtitle"
+EXTRA_OFFICIAL_PACKAGES=(xf86-video-fbdev xorg-xinit dmenu dialog firefox)
+EXTRA_GROUP_PACKAGES=(xorg)
+EXTRA_AUR_PACKAGES=(bspwm sxhkd lemonbar xdo xtitle)
 
 ARSH_BOOT_PARTITION=/dev/sda1
 ARSH_SWAP_PARTITION=/dev/sda2
