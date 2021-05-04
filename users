@@ -3,8 +3,9 @@ arch-chroot /mnt /bin/bash << EOF
   printf "$ROOT_PASSWORD\n$ROOT_PASSWORD" | passwd
 
   # Create new non-root user (and add it to essential groups)
-  # audio,video,optical,storage
-  useradd -mG wheel $USER_NAME
+  # wheel = default for sudo
+  # video = manipulate screen brightness
+  useradd -mG wheel video $USER_NAME
 
   # Set password non-root user password
   printf "$USER_PASSWORD\n$USER_PASSWORD" | passwd $USER_NAME
