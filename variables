@@ -26,9 +26,9 @@ INTERNET_PACKAGES=(networkmanager wpa_supplicant)
 DEVELOPMENT_PACKAGES=(git vim unzip stow)
 DEVELOPMENT_GROUP_PACKAGES=(base-devel)
 
-EXTRA_OFFICIAL_PACKAGES=(xf86-video-fbdev xorg-xinit dmenu dialog firefox pulseaudio alsa-utils)
+EXTRA_OFFICIAL_PACKAGES=(xf86-video-fbdev xorg-xinit dmenu dialog pulseaudio alsa-utils)
 EXTRA_GROUP_PACKAGES=(xorg)
-EXTRA_AUR_PACKAGES=(bspwm sxhkd lemonbar xdo xtitle)
+EXTRA_AUR_PACKAGES=(bspwm sxhkd lemonbar xdo xtitle brave-bin)
 
 ARSH_BOOT_PARTITION=/dev/sda1
 ARSH_SWAP_PARTITION=/dev/sda2
