@@ -23,9 +23,6 @@ arch-chroot /mnt /bin/bash << EOF
   # Installs yay from source
   (cd yay-bin ; makepkg --noconfirm -si)
 
-  # Downloads nerd-fonts-mononoki
-  echo "$USER_PASSWORD" | yay --sudoflags -S --noconfirm -S nerd-fonts-mononoki
-
   # Installs extra graphical packages
   while ! pacman -Q ${EXTRA_AUR_PACKAGES[*]}; do
     echo "$USER_PASSWORD" | yay --sudoflags -S --removemake --noconfirm -S ${EXTRA_AUR_PACKAGES[*]}
