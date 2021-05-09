@@ -5,9 +5,8 @@ arch-chroot /mnt /bin/bash << EOF
   # Create new non-root user (and add it to essential groups)
   # wheel = default for sudo
   # video = manipulate screen brightness
-  # vboxusers = required by virtualbox
   # storage = allow accessing usb subsystem through virtualbox
-  useradd -mG wheel,video,vboxusers,storage $USER_NAME
+  useradd -mG wheel,video,storage $USER_NAME
 
   # Set password non-root user password
   printf "$USER_PASSWORD\n$USER_PASSWORD" | passwd $USER_NAME
