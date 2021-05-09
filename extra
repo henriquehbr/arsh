@@ -21,7 +21,7 @@ arch-chroot /mnt /bin/bash << EOF
   git clone https://aur.archlinux.org/yay-bin.git
 
   # Installs yay from source
-  (cd yay-bin ; makepkg --noconfirm -si)
+  (cd yay-bin ; makepkg ; echo "$USER_PASSWORD" | sudo -S pacman --noconfirm -U yay-bin*)
 
   # Installs extra graphical packages
   while ! pacman -Q ${EXTRA_AUR_PACKAGES[*]}; do
