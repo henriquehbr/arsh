@@ -37,7 +37,7 @@ arch-chroot /mnt /bin/bash << EOF
 
   GRAPHICS_CARD_DIR=$(basename /sys/class/backlight/*)
 
-  # Allow users in `video` group to manipulate backlight (screen brightness)
+  # Allow users in "video" group to manipulate backlight (screen brightness)
   (echo "$USER_PASSWORD" ; echo "RUN+=\"/bin/chgrp wheel /sys/class/backlight/intel_backlight/brightness\"") | sudo -S tee /etc/udev/rules.d/backlight.rules
   (echo "$USER_PASSWORD" ; echo "RUN+=\"/bin/chmod g+w /sys/class/backlight/intel_backlight/brightness\"") | sudo -S tee -a /etc/udev/rules.d/backlight.rules
 EOF
