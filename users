@@ -12,7 +12,7 @@ arch-chroot /mnt /bin/bash << EOF
   # Set password non-root user password
   printf "$USER_PASSWORD\n$USER_PASSWORD" | passwd $USER_NAME
 
-  # Installs `sudo`
+  # Installs "sudo"
   pacman --noconfirm -S sudo
 
   # Allow members of group wheel to execute any command (as sudo)
