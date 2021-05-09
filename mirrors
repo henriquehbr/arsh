@@ -7,6 +7,6 @@ pacman -Syy
 pacman -S --noconfirm reflector
 
 # Get the most updated mirrors from the specified country
-reflector --sort age -c $MIRROR_COUNTRY --save /etc/pacman.d/mirrorlist
+reflector --connection-timeout 10 --download-timeout 10 --sort age -c $MIRROR_COUNTRY --save /etc/pacman.d/mirrorlist
 
 pacman -Syy
