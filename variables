@@ -26,7 +26,7 @@ INTERNET_PACKAGES=(networkmanager wpa_supplicant)
 DEVELOPMENT_PACKAGES=(git vim unzip stow)
 DEVELOPMENT_GROUP_PACKAGES=(base-devel)
 
-EXTRA_OFFICIAL_PACKAGES=(xf86-video-fbdev xorg-xinit neovim dmenu dialog pulseaudio alsa-utils virtualbox inotify-tools linux-headers reflector xdg-user-dirs exa)
+EXTRA_OFFICIAL_PACKAGES=(xf86-video-fbdev xorg-xinit neovim dmenu dialog pulseaudio alsa-utils virtualbox inotify-tools linux-headers reflector xdg-user-dirs exa dash)
 EXTRA_GROUP_PACKAGES=(xorg)
 EXTRA_AUR_PACKAGES=(bspwm sxhkd lemonbar-xft-git xdo xtitle brave-bin)
 
