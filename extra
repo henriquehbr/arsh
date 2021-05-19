@@ -46,5 +46,5 @@ arch-chroot /mnt /bin/bash << EOF
   xdg-user-dirs-update
 
   # Set "/bin/sh" to "dash"
-  echo "$USER_PASSWORD" | sudo -S ln -sfT /usr/bin/sh
+  echo "$USER_PASSWORD" | sudo -S ln -sfT dash /usr/bin/sh
 EOF
