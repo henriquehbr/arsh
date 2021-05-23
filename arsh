@@ -28,9 +28,9 @@ MODULES=(
 MODULES=$(IFS=, ; echo "${MODULES[*]}")
 
 curl -Ls https://raw.githubusercontent.com/henriquehbr/arsh/main/config > config
-curl -Ls "https://raw.githubusercontent.com/henriquehbr/arsh/main/{$MODULES}" >> arsh
+curl -Ls "https://raw.githubusercontent.com/henriquehbr/arsh/main/{$MODULES}" >> arsh_bundle
 
-chmod +x arsh
+chmod +x arsh_bundle
 
 source config
-source arsh
+source arsh_bundle
