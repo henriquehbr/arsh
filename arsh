@@ -161,6 +161,9 @@ mirrors() {
 
 
 install_packages() {
+	infobox "Synchronizing package databases"
+	pacman -Sy
+
 	infobox "Installing base system packages: ${packages[*]}"
 	pacstrap /mnt "${packages[@]}"
 }
