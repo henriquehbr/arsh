@@ -15,7 +15,7 @@ curl -L git.io/J3BJ9 | bash
 This hand-crafted script performs a slightly opinionated and absolutely-bare-bones LUKS encrypted Arch installation, having only the extreme basics and essentials to make it bootable and connected to the internet, by default, the partitioning is done as the following:
 
 - Boot partition (`/dev/sda1`) 550MB
-- Swap partition (`/dev/sda2`) RAM + round(sqrt(RAM))GB
+- Swap partition (`/dev/sda2`) `RAM + round(sqrt(RAM))`GB
 - Root partition (`/dev/sda3`) Remaining space 
 
 and when it comes to packages, only the following ones are installed:
