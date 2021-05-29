@@ -215,11 +215,11 @@ keymap() {
 }
 
 post_install() {
-	infobox "Unmounting root partition from /mnt"
-	umount -l /mnt
-
 	infobox "Enabling NetworkManager service"
 	arch-chroot /mnt systemctl enable NetworkManager
+
+	infobox "Unmounting root partition from /mnt"
+	umount -l /mnt
 
 	menu_entries=$(echo -e "Power off\nReboot\nExit script")
 	action=$(menu "$menu_entries" "Installation finished" "What do you want to do now?")
