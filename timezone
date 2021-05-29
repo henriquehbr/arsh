@@ -1,7 +1,0 @@
-arch-chroot /mnt /bin/bash << EOF
-  # Set timezone to America/Araguaina (GMT-3) on new system
-  ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
-
-  # Set hardware clock based on system time on new system
-  hwclock --systohc
-EOF

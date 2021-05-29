@@ -1,9 +1,0 @@
-arch-chroot /mnt /bin/bash << EOF
-  # Set machine name
-  echo "$HOSTNAME" > /etc/hostname
-
-  # Setup hosts file
-  echo "127.0.0.1	localhost" > /etc/hosts
-  echo "::1		localhost" > /etc/hosts
-  echo "127.0.0.1	${HOSTNAME}.localdomain ${HOSTNAME}" > /etc/hosts
-EOF

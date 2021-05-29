@@ -1,2 +1,0 @@
-# Generate filesystem table
-genfstab -U /mnt >> /mnt/etc/fstab

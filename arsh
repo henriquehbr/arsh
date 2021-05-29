@@ -7,30 +7,221 @@
 # | | | | |_) | |     https://reddit.com/u/henriquehbr
 # |_| |_|_.__/|_|
 
-# Insert "mirrors" after "bootloader"
-MODULES=(
-  "variables"
-  "validate-config"
-  "partitioning"
-  "formatting"
-  "mirrors"
-  "install-packages"
-  "generate-fs-table"
-  "timezone"
-  "locales"
-  "hostname"
-  "users"
-  "bootloader"
-  "extra"
-  "post-install"
-)
+# Exit on errors
+set -e
 
-MODULES=$(IFS=, ; echo "${MODULES[*]}")
+# ========== Configuration variables ==========
 
-curl -Ls https://raw.githubusercontent.com/henriquehbr/arsh/main/config > config
-curl -Ls "https://raw.githubusercontent.com/henriquehbr/arsh/main/{$MODULES}" >> arsh_bundle
+ROOT_PASSWORD=""
+LUKS_PARTITION_NAME=""
+LUKS_PARTITION_PASSWORD=""
 
-chmod +x arsh_bundle
+# ========== DO NOT EDIT BELOW THIS LINE ==========
 
-source config
-source arsh_bundle
+# Text styling inside dialog
+bold="\Zb"
+normal="\ZB"
+
+cpu_vendor=$(lscpu | grep GenuineIntel > /dev/null 2>&1 && echo intel || echo amd)
+cpu_package="${cpu_vendor}-ucode"
+
+# Calculate swap size based on the formula: RAM + round(sqrt(RAM))
+ram=$(grep MemTotal /proc/meminfo | awk '{ print int($2 / 1000000) }')
+swap=$(echo $ram | awk '{ print $1 + int(sqrt(8)) }')
+
+boot_partition=/dev/sda1
+swap_partition=/dev/sda2
+root_partition=/dev/sda3
+
+packages=(base linux linux-firmware grub efibootmgr networkmanager $cpu_package)
+
+# ========== Functions ==========
+
+radiolist() {
+	list=()
+
+	IFS=$'\n'
+	for element in $1; do
+		list+=("$element" "" OFF)
+	done
+
+	dialog=$(dialog --stdout --no-cancel --title "$2" --radiolist "$3" 0 0 0 "${list[@]}")
+	echo "$dialog"
+}
+
+menu() {
+	list=()
+
+	IFS=$'\n'
+	for element in $1; do
+		list+=("$element" "")
+	done
+
+	dialog=$(dialog --stdout --title "$2" --menu "$3" 0 0 0 "${list[@]}")
+	echo "$dialog"
+}
+
+infobox() {
+	border_length=($(echo "$1" | wc -m) + 1)
+	printf "\n%${border_length}s\n" | tr " " "="
+	echo " $1 "
+	printf "%${border_length}s\n\n" | tr " " "="
+}
+
+msgbox() {
+	dialog --title "$1" --msgbox "$2" 0 0
+}
+
+check_dialog() {
+	if ! dialog &> /dev/null; then
+		clear
+		echo "Package 'dialog' couldn't be found, it is required for drawing TUI windows"
+		exit 1
+	fi
+}
+
+check_variables() {
+	if [[ -z "$ROOT_PASSWORD" || -z "$LUKS_PARTITION_NAME" || -z "$LUKS_PARTITION_PASSWORD" ]]; then
+		msgbox "No configuration found" "You forgot to declare one or more of the configuration variables on the beginning of the 'arsh' file"
+		clear
+		exit 1
+	fi
+}
+
+welcome() {
+	dialog \
+		--colors \
+		--title "Welcome to arsh!" \
+		--yes-label "Proceed!" \
+		--no-label "No, thanks" \
+		--yesno "This script will automatically setup an LUKS encrypted Arch Linux installation on your system\n\n${bold}WARNING: This means your whole disk will be wiped, deleting ALL your data. if you have any doubts about the installation process, consider installing on a virtual machine first${normal}" \
+		0 0
+	}
+
+keymap() {
+	keymaps=$(localectl list-keymaps)
+	keymap=$(radiolist "$keymaps" "Settings" "Choose your keymap")
+	loadkeys "$keymap"
+}
+
+partitioning() {
+	infobox "Creating boot (/dev/sda1), swap (/dev/sda2), and root (/dev/sda3) partitions"
+	boot_partition_create=(n 1 "" "+550M")
+	swap_partition_create=(n 2 "" "+${swap}G")
+	root_partition_create=(n 3 "" "")
+
+	boot_partition_type=(t 1 1)
+	swap_partition_type=(t 2 19)
+
+	fdisk_instructions=(
+		g
+		"${boot_partition_create[@]}"
+		"${swap_partition_create[@]}"
+		"${root_partition_create[@]}"
+		"${boot_partition_type[@]}"
+		"${swap_partition_type[@]}"
+		w
+	)
+	for instruction in "${fdisk_instructions[@]}"; do
+		echo "$instruction"
+	done | fdisk /dev/sda
+}
+
+formatting() {
+	infobox "Formatting boot partition as FAT32"
+	mkfs.fat -F32 $boot_partition
+
+	infobox "Setting up swap partition"
+	mkswap $swap_partition
+	swapon $swap_partition
+
+	infobox "Setting up LUKS encryption on root partition"
+	printf "$LUKS_PARTITION_PASSWORD" | cryptsetup luksFormat -v $root_partition -d -
+
+	infobox "Opens encrypted root partition in order to format it"
+	printf "$LUKS_PARTITION_PASSWORD" | cryptsetup open $root_partition $LUKS_PARTITION_NAME -d -
+
+	infobox "Formats root partition as ext4"
+	mkfs.ext4 "/dev/mapper/$LUKS_PARTITION_NAME"
+
+	infobox "Mount root partition to /mnt"
+	mount "/dev/mapper/$LUKS_PARTITION_NAME" /mnt
+
+	infobox "Mount boot partition to /mnt/boot"
+	mkdir /mnt/boot
+	mount $boot_partition /mnt/boot
+}
+
+mirrors() {
+	# Fetch pacman mirror countries
+	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d)
+	mirror_country=$(radiolist \
+		"$mirror_list" \
+		"Settings" \
+		"Choose your (or the nearest) country to be the mirror where packages will be downloaded from" \
+		0 0
+	)
+	# Get the most recently updated mirrors from the specified country
+	reflector --sort age -c "$mirror_country" --save /etc/pacman.d/mirrorlist
+}
+
+
+install_packages() {
+	infobox "Installing base system packages: ${packages[@]}"
+	pacstrap /mnt ${packages[@]}
+}
+
+generate_filesystem_table() {
+	infobox "Generating filesystem table"
+	genfstab -U /mnt >> /mnt/etc/fstab
+}
+
+root_password() {
+	infobox "Setting root password"
+	arch-chroot /mnt /bin/bash <<- EOF
+		printf "$ROOT_PASSWORD\n$ROOT_PASSWORD" | passwd
+	EOF
+}
+
+bootloader() {
+	sed -i "s/autodetect modconf/autodetect keyboard keymap modconf/" /mnt/etc/mkinitcpio.conf
+	sed -i "s/modconf block/modconf block encrypt/" /mnt/etc/mkinitcpio.conf
+
+	arch-chroot /mnt mkinitcpio -p linux
+
+	infobox "Installing GRUB"
+	arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+
+	infobox "Generating GRUB config file"
+	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+	luks_partition_uuid=$(blkid -o value $root_partition | head -n 1)
+	grub_old_string="GRUB_CMDLINE_LINUX=\"\""
+	grub_kernel_parameters="cryptdevice=UUID=$luks_partition_uuid:$LUKS_PARTITION_NAME root=/dev/mapper/$LUKS_PARTITION_NAME"
+	grub_new_string="GRUB_CMDLINE_LINUX=\"$grub_kernel_parameters\""
+	sed -i "s|$grub_old_string|$grub_new_string|" /mnt/etc/default/grub
+	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+}
+
+post_install() {
+	umount -l /mnt
+	menu_entries=$(echo -e "Power off\nReboot\nExit script")
+	action=$(menu "$menu_entries" "Installation finished" "What do you want to do now?")
+	case $action in
+		"Power off") shutdown now ;;
+		"Reboot") reboot ;;
+		*) exit ;;
+	esac
+}
+
+check_dialog
+check_variables
+welcome
+keymap
+partitioning
+formatting
+mirrors
+install_packages
+generate_filesystem_table
+bootloader
+root_password
+post_install
