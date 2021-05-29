@@ -27,13 +27,13 @@ cpu_package="${cpu_vendor}-ucode"
 
 # Calculate swap size based on the formula: RAM + round(sqrt(RAM))
 ram=$(grep MemTotal /proc/meminfo | awk '{ print int($2 / 1000000) }')
-swap=$(echo $ram | awk '{ print $1 + int(sqrt(8)) }')
+swap=$(echo "$ram" | awk '{ print $1 + int(sqrt(8)) }')
 
 boot_partition=/dev/sda1
 swap_partition=/dev/sda2
 root_partition=/dev/sda3
 
-packages=(base linux linux-firmware grub efibootmgr networkmanager $cpu_package)
+packages=(base linux linux-firmware grub efibootmgr networkmanager "$cpu_package")
 
 # ========== Functions ==========
 
@@ -62,7 +62,7 @@ menu() {
 }
 
 infobox() {
-	border_length=($(echo "$1" | wc -m) + 1)
+	border_length=$( (echo "$1" | wc -m + 1) )
 	printf "\n%${border_length}s\n" | tr " " "="
 	echo " $1 "
 	printf "%${border_length}s\n\n" | tr " " "="
@@ -136,10 +136,10 @@ formatting() {
 	swapon $swap_partition
 
 	infobox "Setting up LUKS encryption on root partition"
-	printf "$LUKS_PARTITION_PASSWORD" | cryptsetup luksFormat -v $root_partition -d -
+	printf "%s" "$LUKS_PARTITION_PASSWORD" | cryptsetup luksFormat -v $root_partition -d -
 
 	infobox "Opens encrypted root partition in order to format it"
-	printf "$LUKS_PARTITION_PASSWORD" | cryptsetup open $root_partition $LUKS_PARTITION_NAME -d -
+	printf "%s" "$LUKS_PARTITION_PASSWORD" | cryptsetup open $root_partition "$LUKS_PARTITION_NAME" -d -
 
 	infobox "Formats root partition as ext4"
 	mkfs.ext4 "/dev/mapper/$LUKS_PARTITION_NAME"
@@ -167,8 +167,8 @@ mirrors() {
 
 
 install_packages() {
-	infobox "Installing base system packages: ${packages[@]}"
-	pacstrap /mnt ${packages[@]}
+	infobox "Installing base system packages: ${packages[*]}"
+	pacstrap /mnt "${packages[@]}"
 }
 
 generate_filesystem_table() {
