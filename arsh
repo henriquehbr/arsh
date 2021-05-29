@@ -98,12 +98,6 @@ welcome() {
 		0 0
 	}
 
-keymap() {
-	keymaps=$(localectl list-keymaps)
-	keymap=$(radiolist "$keymaps" "Settings" "Choose your keymap")
-	loadkeys "$keymap"
-}
-
 partitioning() {
 	infobox "Creating boot (/dev/sda1), swap (/dev/sda2), and root (/dev/sda3) partitions"
 	boot_partition_create=(n 1 "" "+550M")
@@ -202,6 +196,15 @@ bootloader() {
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 }
 
+keymap() {
+	keymaps=$(localectl list-keymaps)
+	keymap=$(radiolist "$keymaps" "Settings" "Choose your keymap")
+	clear
+
+	infobox "Saving persistent keyboard layout configuration"
+	echo "KEYMAP=$keymap" > /etc/vconsole.conf
+}
+
 post_install() {
 	infobox "Unmounting root partition from /mnt"
 	umount -l /mnt
@@ -221,12 +224,12 @@ post_install() {
 check_dialog
 check_variables
 welcome
-keymap
 partitioning
 formatting
 mirrors
 install_packages
 generate_filesystem_table
 bootloader
+keymap
 root_password
 post_install
