@@ -164,6 +164,9 @@ install_packages() {
 	infobox "Initialize pacman keyring"
 	pacman-key --init
 
+	infobox "Verifying pacman keyring master keys"
+	pacman-key --populate archlinux
+
 	infobox "Synchronizing package databases"
 	pacman -Sy
 
