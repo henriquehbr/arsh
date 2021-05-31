@@ -22,10 +22,6 @@ MIRROR_COUNTRY=""
 
 # ========== DO NOT EDIT BELOW THIS LINE ==========
 
-# Text styling inside dialog
-bold="\Zb"
-normal="\ZB"
-
 cpu_vendor=$(lscpu | grep GenuineIntel > /dev/null 2>&1 && echo intel || echo amd)
 cpu_package="${cpu_vendor}-ucode"
 
@@ -41,43 +37,11 @@ packages=(base linux linux-firmware grub efibootmgr networkmanager "$cpu_package
 
 # ========== Functions ==========
 
-radiolist() {
-	list=()
-
-	IFS=$'\n'
-	for element in $1; do
-		list+=("$element" "" OFF)
-	done
-
-	dialog=$(dialog --stdout --no-cancel --title "$2" --radiolist "$3" 0 0 0 "${list[@]}")
-	echo "$dialog"
-}
-
-menu() {
-	list=()
-
-	IFS=$'\n'
-	for element in $1; do
-		list+=("$element" "")
-	done
-
-	dialog=$(dialog --stdout --title "$2" --menu "$3" 0 0 0 "${list[@]}")
-	echo "$dialog"
-}
-
 infobox() {
 	let border_length="$(echo "$1" | wc -m) + 1"
 	printf "\n%${border_length}s\n" | tr " " "="
 	echo " $1 "
 	printf "%${border_length}s\n\n" | tr " " "="
-}
-
-check_dialog() {
-	if ! dialog &> /dev/null; then
-		clear
-		echo "Package 'dialog' couldn't be found, it is required for drawing TUI windows"
-		exit 1
-	fi
 }
 
 check_variables() {
@@ -105,14 +69,17 @@ check_variables() {
 }
 
 welcome() {
-	dialog \
-		--colors \
-		--title "Welcome to arsh!" \
-		--yes-label "Proceed!" \
-		--no-label "No, thanks" \
-		--yesno "This script will automatically setup an LUKS encrypted Arch Linux installation on your system\n\n${bold}WARNING: This means your whole disk will be wiped, deleting ALL your data. if you have any doubts about the installation process, consider installing on a virtual machine first${normal}" \
-		0 0
-	}
+	echo " Welcome to arsh! "
+	echo "=================="
+	echo "This script will automatically setup an LUKS encrypted Arch Linux installation on your system"
+	echo "WARNING: This means your whole disk will be wiped, deleting ALL your data"
+	echo "If you have any doubts about the installation process, i strongly recommend to installing this on a virtual machine first"
+	echo "Once you start, there's no turning back, the whole process is automated\n"
+	read -p "Do you wanna start the installation? (y/n) " install
+	if [[ ! "$install" =~ ^[yY]$ ]]; then
+		exit
+	fi
+}
 
 partitioning() {
 	infobox "Creating boot (/dev/sda1), swap (/dev/sda2), and root (/dev/sda3) partitions"
@@ -232,16 +199,9 @@ post_install() {
 	infobox "Unmounting root partition from /mnt"
 	umount -l /mnt
 
-	menu_entries=$(echo -e "Power off\nReboot\nExit script")
-	action=$(menu "$menu_entries" "Installation finished" "What do you want to do now?")
-	case $action in
-		"Power off") shutdown now ;;
-		"Reboot") reboot ;;
-		*) exit ;;
-	esac
+	infobox "Installation finished! you might remove the installation media and reboot now"
 }
 
-check_dialog
 check_variables
 welcome
 partitioning
