@@ -7,12 +7,14 @@
 # | | | | |_) | |     https://reddit.com/u/henriquehbr
 # |_| |_|_.__/|_|
 
-# Exit on errors
+# Exit on error
 set -e
 
 # ========== Configuration variables ==========
 
 ROOT_PASSWORD=""
+USER_NAME=""
+USER_PASSWORD=""
 LUKS_PARTITION_NAME=""
 LUKS_PARTITION_PASSWORD=""
 
@@ -81,8 +83,14 @@ check_dialog() {
 }
 
 check_variables() {
-	if [[ -z "$ROOT_PASSWORD" || -z "$LUKS_PARTITION_NAME" || -z "$LUKS_PARTITION_PASSWORD" ]]; then
-		msgbox "No configuration found" "You forgot to declare one or more of the configuration variables on the beginning of the 'arsh' file"
+	# Validates user name
+	valid_username=$(echo "$USER_NAME" | grep "^[a-z_][a-z0-9_-]*$" || echo "")
+	if [[ -z "$valid_username" ]]; then
+		msgbox "Invalid configuration" "Your username is invalid, remember to only use alfanumeric characters, and the first character MUST be a letter"
+		clear
+		exit 1
+	elif [[ -z "$ROOT_PASSWORD" || -z "$LUKS_PARTITION_NAME" || -z "$LUKS_PARTITION_PASSWORD" ]]; then
+		msgbox "Missing configuration" "Check your configuration variables on the beginning of the 'arsh' file, maybe one of them is invalid or undefined"
 		clear
 		exit 1
 	fi
@@ -186,6 +194,14 @@ root_password() {
 	EOF
 }
 
+create_user() {
+	infobox "Creating non-root user '$USER_NAME'"
+	arch-chroot /mnt useradd -mG wheel,video,storage $USER_NAME
+	arch-chroot /mnt /bin/bash <<- EOF
+		printf "$USER_PASSWORD\n$USER_PASSWORD" | passwd $USER_NAME
+	EOF
+}
+
 bootloader() {
 	sed -i "s/autodetect modconf/autodetect keyboard keymap modconf/" /mnt/etc/mkinitcpio.conf
 	sed -i "s/modconf block/modconf block encrypt/" /mnt/etc/mkinitcpio.conf
@@ -241,4 +257,5 @@ generate_filesystem_table
 bootloader
 keymap
 root_password
+create_user
 post_install
