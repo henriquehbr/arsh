@@ -46,24 +46,24 @@ infobox() {
 
 check_variables() {
 	valid_username=$(echo "$USER_NAME" | grep "^[a-z_][a-z0-9_-]*$" || echo "")
-	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRY$")
-	keymaps=$(localectl list-keymaps | grep -E ^$KEYMAP$)
+	keymaps=$(localectl list-keymaps | grep -E ^$KEYMAP$ || echo "")
+
+	infobox "Fetching Arch mirror countries with reflector..."
+	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRY$" || echo "")
+
+	clear
 
 	if [[ -z "$keymaps" ]]; then
 		infobox "The keyboard layout is invalid, check all valid keyboard layouts with the command: 'localectl list-keymaps'"
-		clear
 		exit 1
 	elif [[ -z "$mirror_list" ]]; then
 		infobox "The mirror country is invalid, check all valid mirror countries with the command: 'reflector --list-countries'"
-		clear
 		exit 1
 	elif [[ -z "$valid_username" ]]; then
 		infobox "Your username is invalid, remember to only use alfanumeric characters, and the first character MUST be a letter"
-		clear
 		exit 1
 	elif [[ -z "$ROOT_PASSWORD" || -z "$LUKS_PARTITION_NAME" || -z "$LUKS_PARTITION_PASSWORD" ]]; then
 		infobox "Check your configuration variables on the beginning of the 'arsh' file, maybe one of them is invalid or undefined"
-		clear
 		exit 1
 	fi
 }
