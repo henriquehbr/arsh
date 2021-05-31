@@ -17,6 +17,7 @@ USER_NAME=""
 USER_PASSWORD=""
 LUKS_PARTITION_NAME=""
 LUKS_PARTITION_PASSWORD=""
+MIRROR_COUNTRY="Brazil"
 
 # ========== DO NOT EDIT BELOW THIS LINE ==========
 
@@ -70,10 +71,6 @@ infobox() {
 	printf "%${border_length}s\n\n" | tr " " "="
 }
 
-msgbox() {
-	dialog --title "$1" --msgbox "$2" 0 0
-}
-
 check_dialog() {
 	if ! dialog &> /dev/null; then
 		clear
@@ -83,14 +80,19 @@ check_dialog() {
 }
 
 check_variables() {
-	# Validates user name
 	valid_username=$(echo "$USER_NAME" | grep "^[a-z_][a-z0-9_-]*$" || echo "")
-	if [[ -z "$valid_username" ]]; then
-		msgbox "Invalid configuration" "Your username is invalid, remember to only use alfanumeric characters, and the first character MUST be a letter"
+	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRY$")
+
+	if [[ -z "$mirror_list" ]]; then
+		infobox "The mirror country is invalid, check all valid mirror countries with the command: 'reflector --list-countries'"
+		clear
+		exit 1
+	elif [[ -z "$valid_username" ]]; then
+		infobox "Your username is invalid, remember to only use alfanumeric characters, and the first character MUST be a letter"
 		clear
 		exit 1
 	elif [[ -z "$ROOT_PASSWORD" || -z "$LUKS_PARTITION_NAME" || -z "$LUKS_PARTITION_PASSWORD" ]]; then
-		msgbox "Missing configuration" "Check your configuration variables on the beginning of the 'arsh' file, maybe one of them is invalid or undefined"
+		infobox "Check your configuration variables on the beginning of the 'arsh' file, maybe one of them is invalid or undefined"
 		clear
 		exit 1
 	fi
@@ -105,6 +107,11 @@ welcome() {
 		--yesno "This script will automatically setup an LUKS encrypted Arch Linux installation on your system\n\n${bold}WARNING: This means your whole disk will be wiped, deleting ALL your data. if you have any doubts about the installation process, consider installing on a virtual machine first${normal}" \
 		0 0
 	}
+
+mirrors() {
+	# Get the most recently updated mirrors from the specified country
+	reflector --sort age -c "$MIRROR_COUNTRY" --save /etc/pacman.d/mirrorlist
+}
 
 partitioning() {
 	infobox "Creating boot (/dev/sda1), swap (/dev/sda2), and root (/dev/sda3) partitions"
@@ -153,20 +160,6 @@ formatting() {
 	mkdir /mnt/boot
 	mount $boot_partition /mnt/boot
 }
-
-mirrors() {
-	# Fetch pacman mirror countries
-	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d)
-	mirror_country=$(radiolist \
-		"$mirror_list" \
-		"Settings" \
-		"Choose your (or the nearest) country to be the mirror where packages will be downloaded from" \
-		0 0
-	)
-	# Get the most recently updated mirrors from the specified country
-	reflector --sort age -c "$mirror_country" --save /etc/pacman.d/mirrorlist
-}
-
 
 install_packages() {
 	infobox "Initialize pacman keyring"
