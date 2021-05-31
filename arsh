@@ -22,6 +22,9 @@ MIRROR_COUNTRY=""
 
 # ========== DO NOT EDIT BELOW THIS LINE ==========
 
+bold=$(tput bold)
+normal=$(tput sgr0)
+
 cpu_vendor=$(lscpu | grep GenuineIntel > /dev/null 2>&1 && echo intel || echo amd)
 cpu_package="${cpu_vendor}-ucode"
 
@@ -48,7 +51,7 @@ check_variables() {
 	valid_username=$(echo "$USER_NAME" | grep "^[a-z_][a-z0-9_-]*$" || echo "")
 	keymaps=$(localectl list-keymaps | grep -E ^$KEYMAP$ || echo "")
 
-	infobox "Fetching Arch mirror countries with reflector..."
+	infobox "Fetching Arch mirror countries with reflector"
 	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRY$" || echo "")
 
 	clear
@@ -72,9 +75,9 @@ welcome() {
 	echo " Welcome to arsh! "
 	echo "=================="
 	echo "This script will automatically setup an LUKS encrypted Arch Linux installation on your system"
-	echo "WARNING: This means your whole disk will be wiped, deleting ALL your data"
-	echo "If you have any doubts about the installation process, i strongly recommend to installing this on a virtual machine first"
-	echo "Once you start, there's no turning back, the whole process is automated\n"
+	echo "If you have any doubts about the installation process, i strongly recommend to installing this"
+	echo -e "on a virtual machine first, once you start, there's no turning back, the whole process is automated\n"
+	echo -e "${bold}WARNING: This means your whole disk will be wiped, deleting ALL your data${normal}\n"
 	read -p "Do you wanna start the installation? (y/n) " install
 	if [[ ! "$install" =~ ^[yY]$ ]]; then
 		exit
