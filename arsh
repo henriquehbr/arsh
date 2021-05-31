@@ -186,21 +186,6 @@ generate_filesystem_table() {
 	genfstab -U /mnt >> /mnt/etc/fstab
 }
 
-root_password() {
-	infobox "Setting root password"
-	arch-chroot /mnt /bin/bash <<- EOF
-		printf "$ROOT_PASSWORD\n$ROOT_PASSWORD" | passwd
-	EOF
-}
-
-create_user() {
-	infobox "Creating non-root user '$USER_NAME'"
-	arch-chroot /mnt useradd -mG wheel,video,storage $USER_NAME
-	arch-chroot /mnt /bin/bash <<- EOF
-		printf "$USER_PASSWORD\n$USER_PASSWORD" | passwd $USER_NAME
-	EOF
-}
-
 bootloader() {
 	sed -i "s/autodetect modconf/autodetect keyboard keymap modconf/" /mnt/etc/mkinitcpio.conf
 	sed -i "s/modconf block/modconf block encrypt/" /mnt/etc/mkinitcpio.conf
@@ -225,6 +210,21 @@ keymap() {
 	echo "KEYMAP=$keymap" > /mnt/etc/vconsole.conf
 }
 
+root_password() {
+	infobox "Setting root password"
+	arch-chroot /mnt /bin/bash <<- EOF
+		printf "$ROOT_PASSWORD\n$ROOT_PASSWORD" | passwd
+	EOF
+}
+
+create_user() {
+	infobox "Creating non-root user '$USER_NAME'"
+	arch-chroot /mnt useradd -mG wheel,video,storage $USER_NAME
+	arch-chroot /mnt /bin/bash <<- EOF
+		printf "$USER_PASSWORD\n$USER_PASSWORD" | passwd $USER_NAME
+	EOF
+}
+
 post_install() {
 	infobox "Enabling NetworkManager service"
 	arch-chroot /mnt systemctl enable NetworkManager
@@ -244,7 +244,6 @@ post_install() {
 check_dialog
 check_variables
 welcome
-keymap
 partitioning
 formatting
 mirrors
