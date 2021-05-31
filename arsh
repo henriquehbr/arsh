@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 #  _     _          
 # | |   | |           Henrique Borges (henriquehbr)
@@ -36,15 +36,15 @@ boot_partition=/dev/sda1
 swap_partition=/dev/sda2
 root_partition=/dev/sda3
 
-packages=(base linux linux-firmware grub efibootmgr networkmanager "$cpu_package")
+packages="base linux linux-firmware grub efibootmgr networkmanager $cpu_package"
 
 # ========== Functions ==========
 
 infobox() {
-	border_length=( "${#1}" + 1)
-	printf "\n%${border_length[*]}s\n" | tr " " "="
+	border_length=$(( "${#1}" + 2))
+	printf "\n%${border_length}s\n" | tr " " "="
 	echo " $1 "
-	printf "%${border_length[*]}s\n\n" | tr " " "="
+	printf "%${border_length}s\n\n" | tr " " "="
 }
 
 check_variables() {
@@ -56,16 +56,16 @@ check_variables() {
 
 	clear
 
-	if [[ -z "$keymaps" ]]; then
+	if [ -z "$keymaps" ]; then
 		infobox "The keyboard layout is invalid, check all valid keyboard layouts with the command: 'localectl list-keymaps'"
 		exit 1
-	elif [[ -z "$mirror_list" ]]; then
+	elif [ -z "$mirror_list" ]; then
 		infobox "The mirror country is invalid, check all valid mirror countries with the command: 'reflector --list-countries'"
 		exit 1
-	elif [[ -z "$valid_username" ]]; then
+	elif [ -z "$valid_username" ]; then
 		infobox "Your username is invalid, remember to only use alfanumeric characters, and the first character MUST be a letter"
 		exit 1
-	elif [[ -z "$ROOT_PASSWORD" || -z "$LUKS_PARTITION_NAME" || -z "$LUKS_PARTITION_PASSWORD" ]]; then
+	elif [ -z "$ROOT_PASSWORD" ] || [ -z "$LUKS_PARTITION_NAME" ] || [ -z "$LUKS_PARTITION_PASSWORD" ]; then
 		infobox "Check your configuration variables on the beginning of the 'arsh' file, maybe one of them is invalid or undefined"
 		exit 1
 	fi
@@ -76,34 +76,34 @@ welcome() {
 	echo "=================="
 	echo "This script will automatically setup an LUKS encrypted Arch Linux installation on your system"
 	echo "If you have any doubts about the installation process, i strongly recommend to installing this"
-	echo -e "on a virtual machine first, once you start, there's no turning back, the whole process is automated\n"
-	echo -e "${bold}WARNING: This means your whole disk will be wiped, deleting ALL your data${normal}\n"
+	printf "on a virtual machine first, once you start, there's no turning back, the whole process is automated\n\n"
+	printf "%sWARNING: This means your whole disk will be wiped, deleting ALL your data%s\n\n" "$bold" "$normal"
 	read -rp "Do you wanna start the installation? (y/n) " install
-	if [[ ! "$install" =~ ^[yY]$ ]]; then
+	if echo "$install" | grep -vE "^[yY]$"; then
 		exit
 	fi
 }
 
 partitioning() {
 	infobox "Creating boot (/dev/sda1), swap (/dev/sda2), and root (/dev/sda3) partitions"
-	boot_partition_create=(n 1 "" "+550M")
-	swap_partition_create=(n 2 "" "+${swap}G")
-	root_partition_create=(n 3 "" "")
+	boot_partition_create="n 1\n\n+550M"
+	swap_partition_create="n 2\n\n+${swap}G"
+	root_partition_create="n 3\n\n"
 
-	boot_partition_type=(t 1 1)
-	swap_partition_type=(t 2 19)
+	boot_partition_type="t 1 1"
+	swap_partition_type="t 2 19"
 
-	fdisk_instructions=(
+	fdisk_instructions="
 		g
-		"${boot_partition_create[@]}"
-		"${swap_partition_create[@]}"
-		"${root_partition_create[@]}"
-		"${boot_partition_type[@]}"
-		"${swap_partition_type[@]}"
+		$boot_partition_create
+		$swap_partition_create
+		$root_partition_create
+		$boot_partition_type
+		$swap_partition_type
 		w
-	)
-	for instruction in "${fdisk_instructions[@]}"; do
-		echo "$instruction"
+	"
+	for instruction in $fdisk_instructions; do
+		printf "$instruction\n"
 	done | fdisk /dev/sda
 }
 
@@ -147,8 +147,8 @@ install_packages() {
 	infobox "Synchronizing package databases"
 	pacman -Sy
 
-	infobox "Installing base system packages: ${packages[*]}"
-	pacstrap /mnt "${packages[@]}"
+	infobox "Installing base system packages: $packages}"
+	pacstrap /mnt $packages
 }
 
 generate_filesystem_table() {
