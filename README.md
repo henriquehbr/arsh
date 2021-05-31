@@ -2,17 +2,33 @@
 
 > Personal Arch Linux installation script
 
+## Requirements
+
+- An computer with UEFI support, at least 512MB of RAM and 2GB of disk space
+- Any bootable media (USB drive) with at least 512MB of storage space ([Recommended way](#recommended-way))
+- [`dash`](https://archlinux.org/packages/core/x86_64/dash/) ([Script-only way](#script-only-way))
+
+> You can verify that by running `ls /sys/firmware | grep efi` is a directory called `efi` is returned, then you're good to go
+
 ## Installation
 
+#### Recommended way
+
+It's strongly advised to use arshiso instead of Arch's official ones, due to the fact that the first is way more minimal (370MB) in contrast to the latter (755MB) and contain only the bare-minimum required packages to setup the whole installation process, resulting in a much smoother and fast experience, it can be found on the `arshiso` directory
+
+For more technical details regarding arshiso, consider checking the `README` on `archiso` directory
+
+#### Script-only
+
 ```bash
-curl -L git.io/J3BJ9 | bash
+curl -L git.io/J3BJ9 -o arsh
 ```
 
 > `-L` follows redirections
 
-## About
+## About the `arsh` script
 
-This hand-crafted script performs a slightly opinionated and absolutely-bare-bones LUKS encrypted Arch installation, having only the extreme basics and essentials to make it bootable and connected to the internet, by default, the partitioning is done as the following:
+This hand-crafted **dash** script performs a slightly opinionated and absolutely-bare-bones LUKS encrypted Arch installation, having only the extreme basics and essentials to make it bootable and connected to the internet, by default, the partitioning is done as the following:
 
 - Boot partition (`/dev/sda1`) 550MB
 - Swap partition (`/dev/sda2`) `RAM + round(sqrt(RAM))`GB

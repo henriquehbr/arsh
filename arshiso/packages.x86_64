@@ -1,0 +1,24 @@
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+base
+linux
+mkinitcpio
+mkinitcpio-archiso
+openssh
+qemu-guest-agent
+syslinux
+virtualbox-guest-utils-nox
+#############################
+# This one needs no introduction
+vim
+# Small and fast shell (better alternative for bash)
+dash
+# Easy way to keep mirrors updated
+reflector
+# Required in order to use mkfs.fat (for EFI partitions)
+dosfstools
+# Required in order to use pacstrap
+arch-install-scripts
+# Required for putting wireless device out of "generic mode" due to regulatory domain law
+# https://wiki.archlinux.org/title/Network_configuration/Wireless#Respecting_the_regulatory_domain
+crda
