@@ -41,15 +41,15 @@ packages=(base linux linux-firmware grub efibootmgr networkmanager "$cpu_package
 # ========== Functions ==========
 
 infobox() {
-	let border_length="$(echo "$1" | wc -m) + 1"
-	printf "\n%${border_length}s\n" | tr " " "="
+	border_length=( "${#1}" + 1)
+	printf "\n%${border_length[*]}s\n" | tr " " "="
 	echo " $1 "
-	printf "%${border_length}s\n\n" | tr " " "="
+	printf "%${border_length[*]}s\n\n" | tr " " "="
 }
 
 check_variables() {
 	valid_username=$(echo "$USER_NAME" | grep "^[a-z_][a-z0-9_-]*$" || echo "")
-	keymaps=$(localectl list-keymaps | grep -E ^$KEYMAP$ || echo "")
+	keymaps=$(localectl list-keymaps | grep -E "^$KEYMAP$" || echo "")
 
 	infobox "Fetching Arch mirror countries with reflector"
 	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRY$" || echo "")
@@ -78,7 +78,7 @@ welcome() {
 	echo "If you have any doubts about the installation process, i strongly recommend to installing this"
 	echo -e "on a virtual machine first, once you start, there's no turning back, the whole process is automated\n"
 	echo -e "${bold}WARNING: This means your whole disk will be wiped, deleting ALL your data${normal}\n"
-	read -p "Do you wanna start the installation? (y/n) " install
+	read -rp "Do you wanna start the installation? (y/n) " install
 	if [[ ! "$install" =~ ^[yY]$ ]]; then
 		exit
 	fi
@@ -177,7 +177,7 @@ bootloader() {
 
 keymap() {
 	infobox "Saving persistent keyboard layout configuration"
-	echo "KEYMAP=$keymap" > /mnt/etc/vconsole.conf
+	echo "KEYMAP=$KEYMAP" > /mnt/etc/vconsole.conf
 }
 
 root_password() {
@@ -189,7 +189,7 @@ root_password() {
 
 create_user() {
 	infobox "Creating non-root user '$USER_NAME'"
-	arch-chroot /mnt useradd -mG wheel,video,storage $USER_NAME
+	arch-chroot /mnt useradd -mG wheel,video,storage "$USER_NAME"
 	arch-chroot /mnt /bin/bash <<- EOF
 		printf "$USER_PASSWORD\n$USER_PASSWORD" | passwd $USER_NAME
 	EOF
