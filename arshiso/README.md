@@ -4,8 +4,8 @@
 
 By default, arshiso is pre-configured with:
 
-- My actual-keyboard layout (br-abnt2)
-- The `arsh` script with execution permission
+- My actual keyboard layout (br-abnt2)
+- The `arsh` script with execution permissions
 
 And also, **only** the following packages are included:
 
@@ -20,7 +20,6 @@ order to use `mkfs.fat`)
 - [arch-install-scripts](https://archlinux.org/packages/extra/any/arch-instal-scripts/) - Scripts to aid in in
 stalling Arch Linux
 - [crda](https://archlinux.org/packages/core/x86_64/crda/) - Central Regulatory Domain Agent for wireless netwo
-rks (more details [here](https://wiki.archlinux.org/title/Network_configuration/Wireless#Respecting_the_regulat
-ory_domain))
+rks (more details [here](https://wiki.archlinux.org/title/Network_configuration/Wireless#Respecting_the_regulatory_domain))
 
 > Each one of these packages can be found on the official Arch repository
