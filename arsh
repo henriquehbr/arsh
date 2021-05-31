@@ -17,7 +17,8 @@ USER_NAME=""
 USER_PASSWORD=""
 LUKS_PARTITION_NAME=""
 LUKS_PARTITION_PASSWORD=""
-MIRROR_COUNTRY="Brazil"
+KEYMAP=""
+MIRROR_COUNTRY=""
 
 # ========== DO NOT EDIT BELOW THIS LINE ==========
 
@@ -82,8 +83,13 @@ check_dialog() {
 check_variables() {
 	valid_username=$(echo "$USER_NAME" | grep "^[a-z_][a-z0-9_-]*$" || echo "")
 	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRY$")
+	keymaps=$(localectl list-keymaps | grep -E ^$KEYMAP$)
 
-	if [[ -z "$mirror_list" ]]; then
+	if [[ -z "$keymaps" ]]; then
+		infobox "The keyboard layout is invalid, check all valid keyboard layouts with the command: 'localectl list-keymaps'"
+		clear
+		exit 1
+	elif [[ -z "$mirror_list" ]]; then
 		infobox "The mirror country is invalid, check all valid mirror countries with the command: 'reflector --list-countries'"
 		clear
 		exit 1
@@ -107,11 +113,6 @@ welcome() {
 		--yesno "This script will automatically setup an LUKS encrypted Arch Linux installation on your system\n\n${bold}WARNING: This means your whole disk will be wiped, deleting ALL your data. if you have any doubts about the installation process, consider installing on a virtual machine first${normal}" \
 		0 0
 	}
-
-mirrors() {
-	# Get the most recently updated mirrors from the specified country
-	reflector --sort age -c "$MIRROR_COUNTRY" --save /etc/pacman.d/mirrorlist
-}
 
 partitioning() {
 	infobox "Creating boot (/dev/sda1), swap (/dev/sda2), and root (/dev/sda3) partitions"
@@ -159,6 +160,11 @@ formatting() {
 	infobox "Mount boot partition to /mnt/boot"
 	mkdir /mnt/boot
 	mount $boot_partition /mnt/boot
+}
+
+mirrors() {
+	# Get the most recently updated mirrors from the specified country
+	reflector --sort age -c "$MIRROR_COUNTRY" --save /etc/pacman.d/mirrorlist
 }
 
 install_packages() {
@@ -215,12 +221,8 @@ bootloader() {
 }
 
 keymap() {
-	keymaps=$(localectl list-keymaps)
-	keymap=$(radiolist "$keymaps" "Settings" "Choose your keymap")
-	clear
-
 	infobox "Saving persistent keyboard layout configuration"
-	echo "KEYMAP=$keymap" > /etc/vconsole.conf
+	echo "KEYMAP=$keymap" > /mnt/etc/vconsole.conf
 }
 
 post_install() {
@@ -242,6 +244,7 @@ post_install() {
 check_dialog
 check_variables
 welcome
+keymap
 partitioning
 formatting
 mirrors
