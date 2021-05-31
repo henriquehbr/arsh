@@ -14,7 +14,19 @@
 
 #### Recommended way
 
-It's strongly advised to use arshiso instead of Arch's official ones, due to the fact that the first is way more minimal (370MB) in contrast to the latter (755MB) and contain only the bare-minimum required packages to setup the whole installation process, resulting in a much smoother and fast experience, it can be found on the `arshiso` directory
+It's strongly advised to use arshiso instead of Arch's official ones, due to the fact that the first is way more minimal (370MB) in contrast to the latter (755MB) and contain only the bare-minimum required packages to setup the whole installation process, resulting in a much smoother and fast experience
+
+In order to generate arshiso, clone this repository and run:
+
+```
+$ make iso
+```
+
+Basically, what this Makefile task does is:
+
+- Delete any already existing ISO and it's generated files
+- The `arsh` script will also be copied to the ISO root directory
+- The ISO file is generated on `arshiso/out/arshiso-yyyy.mm.dd-x86_64.iso`
 
 For more technical details regarding arshiso, consider checking the `README` on `archiso` directory
 
