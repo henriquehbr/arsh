@@ -18,6 +18,7 @@ USER_PASSWORD=""
 LUKS_PARTITION_NAME=""
 LUKS_PARTITION_PASSWORD=""
 KEYMAP=""
+LOCALE=""
 MIRROR_COUNTRY=""
 
 # ========== DO NOT EDIT BELOW THIS LINE ==========
@@ -50,13 +51,17 @@ infobox() {
 check_variables() {
 	valid_username=$(echo "$USER_NAME" | grep "^[a-z_][a-z0-9_-]*$" || echo "")
 	keymaps=$(localectl list-keymaps | grep -E "^$KEYMAP$" || echo "")
+	locales=$(grep -P "#[\S][\S @]" /etc/locale.gen | sed -e s/#//g)
 
 	infobox "Fetching Arch mirror countries with reflector"
 	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRY$" || echo "")
 
 	clear
 
-	if [ -z "$keymaps" ]; then
+	if [ -z "$locales" ]; then
+		infobox "The locale is invalid, check all valid locales with the command by checking the file: '/etc/locale.gen'"
+		exit 1
+	elif [ -z "$keymaps" ]; then
 		infobox "The keyboard layout is invalid, check all valid keyboard layouts with the command: 'localectl list-keymaps'"
 		exit 1
 	elif [ -z "$mirror_list" ]; then
@@ -103,7 +108,7 @@ partitioning() {
 		w
 	"
 	for instruction in $fdisk_instructions; do
-		printf "$instruction\n"
+		printf "%s" "$instruction\n"
 	done | fdisk /dev/sda
 }
 
@@ -180,6 +185,15 @@ keymap() {
 	echo "KEYMAP=$KEYMAP" > /mnt/etc/vconsole.conf
 }
 
+locales() {
+	infobox "Generating locales for '$LOCALE'"
+	sed -i "s/#${LOCALE}/${LOCALE}/" /mnt/etc/locale.gen
+	arch-chroot /mnt /bin/bash <<- EOF
+		locale-gen
+		echo "LANG=$LOCALE" | cut -d " " -f 1 > /mnt/etc/locale.conf
+	EOF
+}
+
 root_password() {
 	infobox "Setting root password"
 	arch-chroot /mnt /bin/bash <<- EOF
@@ -214,6 +228,7 @@ install_packages
 generate_filesystem_table
 bootloader
 keymap
+locales
 root_password
 create_user
 post_install
