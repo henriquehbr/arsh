@@ -1,5 +1,5 @@
 clean-iso:
-	sudo rm -rf arshiso/{out,work}
+	sudo rm -rf arshiso/out arshiso/work
 
 update-iso-script:
 	cp arsh arshiso/airootfs/root
