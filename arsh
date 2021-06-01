@@ -91,7 +91,7 @@ welcome() {
 
 partitioning() {
 	infobox "Creating boot (/dev/sda1), swap (/dev/sda2), and root (/dev/sda3) partitions"
-	boot_partition_create="n 1 _+550M"
+	boot_partition_create="n 1 _ +550M"
 	swap_partition_create="n 2 _ +${swap}G"
 	root_partition_create="n 3 _ _"
 
