@@ -37,7 +37,7 @@ boot_partition=/dev/sda1
 swap_partition=/dev/sda2
 root_partition=/dev/sda3
 
-packages="base linux linux-firmware grub efibootmgr networkmanager $cpu_package"
+packages="base linux linux-firmware grub efibootmgr networkmanager dash $cpu_package"
 
 # ========== Functions ==========
 
@@ -188,7 +188,7 @@ keymap() {
 locales() {
 	infobox "Generating locales for '$LOCALE'"
 	sed -i "s/#${LOCALE}/${LOCALE}/" /mnt/etc/locale.gen
-	arch-chroot /mnt /bin/bash <<- EOF
+	arch-chroot /mnt dash <<- EOF
 		locale-gen
 		echo "LANG=$LOCALE" | cut -d " " -f 1 > /mnt/etc/locale.conf
 	EOF
@@ -196,7 +196,7 @@ locales() {
 
 root_password() {
 	infobox "Setting root password"
-	arch-chroot /mnt /bin/bash <<- EOF
+	arch-chroot /mnt dash <<- EOF
 		printf "$ROOT_PASSWORD\n$ROOT_PASSWORD" | passwd
 	EOF
 }
@@ -204,7 +204,7 @@ root_password() {
 create_user() {
 	infobox "Creating non-root user '$USER_NAME'"
 	arch-chroot /mnt useradd -mG wheel,video,storage "$USER_NAME"
-	arch-chroot /mnt /bin/bash <<- EOF
+	arch-chroot /mnt dash <<- EOF
 		printf "$USER_PASSWORD\n$USER_PASSWORD" | passwd $USER_NAME
 	EOF
 }

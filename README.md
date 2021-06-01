@@ -53,6 +53,7 @@ and when it comes to packages, only the following ones are installed:
 - [`linux-firmware`](https://archlinux.org/packages/core/any/linux-firmware/) - Firmware files for Linux
 - [`grub`](https://archlinux.org/packages/core/x86_64/grub/) - GNU Grand Unified Bootloader
 - [`networkmanager`](https://archlinux.org/packages/extra/x86_64/networkmanager/) - Network connection manager and user applications
+- [`dash`](https://archlinux.org/packages/core/x86_64/dash/) - POSIX compliant shell that aims to be as small as possible
 - [`intel-ucode`](https://archlinux.org/packages/extra/any/intel-ucode/) or [`amd-ucode`](https://archlinux.org/packages/core/any/amd-ucode/) (depending on your CPU) - Microcode update files/images for Intel/AMD CPU's
 
-> As pointed by their links, every single one of these 6 packages can be found on the official Arch package repositories
+> As pointed by their links, every single one of these packages can be found on the official Arch package repositories
