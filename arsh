@@ -91,9 +91,9 @@ welcome() {
 
 partitioning() {
 	infobox "Creating boot (/dev/sda1), swap (/dev/sda2), and root (/dev/sda3) partitions"
-	boot_partition_create="n 1\n\n+550M"
-	swap_partition_create="n 2\n\n+${swap}G"
-	root_partition_create="n 3\n\n"
+	boot_partition_create="n 1 _+550M"
+	swap_partition_create="n 2 _ +${swap}G"
+	root_partition_create="n 3 _ _"
 
 	boot_partition_type="t 1 1"
 	swap_partition_type="t 2 19"
@@ -108,11 +108,7 @@ partitioning() {
 		w
 	"
 	for instruction in $fdisk_instructions; do
-		if [ "$instruction" = "\n" ]; then
-			printf "\n"
-		else
-			printf "%s" "$instruction\n"
-		fi
+		printf "%s\n" "$instruction" | grep -q "_" && printf "\n" || printf "%s\n" "$instruction"
 	done | fdisk /dev/sda
 }
 
