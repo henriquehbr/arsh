@@ -108,7 +108,11 @@ partitioning() {
 		w
 	"
 	for instruction in $fdisk_instructions; do
-		printf "%s" "$instruction\n"
+		if [ "$instruction" = "\n" ]; then
+			printf "\n"
+		else
+			printf "%s" "$instruction\n"
+		fi
 	done | fdisk /dev/sda
 }
 
