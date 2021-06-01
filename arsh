@@ -51,7 +51,7 @@ infobox() {
 check_variables() {
 	valid_username=$(echo "$USER_NAME" | grep "^[a-z_][a-z0-9_-]*$" || echo "")
 	keymaps=$(localectl list-keymaps | grep -E "^$KEYMAP$" || echo "")
-	locales=$(grep -P "#[\S][\S @]" /etc/locale.gen | sed -e s/#//g)
+	locales=$(grep -P "#[\S@]" /etc/locale.gen | sed -e s/#//g | cut -d " " -f 1 | grep "^$LOCALE$" || echo "")
 
 	infobox "Fetching Arch mirror countries with reflector"
 	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRY$" || echo "")
