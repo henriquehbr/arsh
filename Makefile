@@ -1,3 +1,6 @@
+lint:
+	shellcheck arsh
+
 clean-iso:
 	sudo rm -rf arshiso/out arshiso/work
 
