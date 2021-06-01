@@ -59,13 +59,13 @@ check_variables() {
 	clear
 
 	if [ -z "$locales" ]; then
-		infobox "The locale is invalid, check all valid locales with the command by checking the file: '/etc/locale.gen'"
+		infobox "The locale is invalid, check all valid locales with the alias: 'get-locales'"
 		exit 1
 	elif [ -z "$keymaps" ]; then
-		infobox "The keyboard layout is invalid, check all valid keyboard layouts with the command: 'localectl list-keymaps'"
+		infobox "The keyboard layout is invalid, check all valid keyboard layouts with the alias: 'get-keymaps'"
 		exit 1
 	elif [ -z "$mirror_list" ]; then
-		infobox "The mirror country is invalid, check all valid mirror countries with the command: 'reflector --list-countries'"
+		infobox "The mirror country is invalid, check all valid mirror countries with the alias: 'get-mirror-countries'"
 		exit 1
 	elif [ -z "$valid_username" ]; then
 		infobox "Your username is invalid, remember to only use alfanumeric characters, and the first character MUST be a letter"
