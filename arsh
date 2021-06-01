@@ -42,7 +42,7 @@ packages="base linux linux-firmware grub efibootmgr networkmanager $cpu_package"
 # ========== Functions ==========
 
 infobox() {
-	border_length=$(( "${#1}" + 2))
+	border_length=$(( ${#1} + 2))
 	printf "\n%${border_length}s\n" | tr " " "="
 	echo " $1 "
 	printf "%${border_length}s\n\n" | tr " " "="
