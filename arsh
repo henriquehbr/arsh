@@ -193,7 +193,7 @@ locales() {
 		locale-gen
 	EOF
 
-	infobox "Saving locales configuration on `/etc/locale.conf`"
+	infobox "Saving locales configuration on '/etc/locale.conf'"
 	echo "LANG=$LOCALE" | cut -d " " -f 1 > /mnt/etc/locale.conf
 }
 
