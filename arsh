@@ -19,6 +19,7 @@ LUKS_PARTITION_NAME=""
 LUKS_PARTITION_PASSWORD=""
 KEYMAP=""
 LOCALE=""
+HOSTNAME=""
 MIRROR_COUNTRY=""
 
 # ========== DO NOT EDIT BELOW THIS LINE ==========
@@ -70,7 +71,7 @@ check_variables() {
 	elif [ -z "$valid_username" ]; then
 		infobox "Your username is invalid, remember to only use alfanumeric characters, and the first character MUST be a letter"
 		exit 1
-	elif [ -z "$ROOT_PASSWORD" ] || [ -z "$LUKS_PARTITION_NAME" ] || [ -z "$LUKS_PARTITION_PASSWORD" ]; then
+	elif [ -z "$ROOT_PASSWORD" ] || [ -z "$LUKS_PARTITION_NAME" ] || [ -z "$LUKS_PARTITION_PASSWORD" ] || [ -z "$HOSTNAME" ]; then
 		infobox "Check your configuration variables on the beginning of the 'arsh' file, maybe one of them is invalid or undefined"
 		exit 1
 	fi
@@ -211,6 +212,18 @@ create_user() {
 	EOF
 }
 
+hostname() {
+	infobox "Setting hostname"
+	echo "$HOSTNAME" > /etc/hostname
+
+	infobox "Setting hosts file"
+	cat <<- EOF /mnt/etc/hosts
+		127.0.0.1     localhost
+		::1           localhost
+		127.0.0.1     ${HOSTNAME}.localdomain ${HOSTNAME}
+	EOF
+}
+
 post_install() {
 	infobox "Enabling NetworkManager service"
 	arch-chroot /mnt systemctl enable NetworkManager
@@ -233,4 +246,5 @@ keymap
 locales
 root_password
 create_user
+hostname
 post_install
