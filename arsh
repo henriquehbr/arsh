@@ -193,7 +193,7 @@ keymap() {
 
 timezone() {
 	infobox "Setting timezone"
-	ln -sf /mnt/usr/share/zoneinfo/$TIMEZONE /mnt/etc/localtime
+	ln -sf "/mnt/usr/share/zoneinfo/$TIMEZONE" /mnt/etc/localtime
 
 	infobox "Setting hardware clock from system clock"
 	hwclock --systohc
