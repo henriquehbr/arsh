@@ -20,6 +20,7 @@ LUKS_PARTITION_PASSWORD=""
 KEYMAP=""
 LOCALE=""
 HOSTNAME=""
+TIMEZONE=""
 MIRROR_COUNTRY=""
 
 # ========== DO NOT EDIT BELOW THIS LINE ==========
@@ -53,13 +54,17 @@ check_variables() {
 	valid_username=$(echo "$USER_NAME" | grep "^[a-z_][a-z0-9_-]*$" || echo "")
 	keymaps=$(localectl list-keymaps | grep -E "^$KEYMAP$" || echo "")
 	locales=$(grep -P "#[\S@]" /etc/locale.gen | sed -e s/#//g | cut -d " " -f 1 | grep "^$LOCALE$" || echo "")
+	timezones=$(timedatectl list-timezones | grep -E "^$TIMEZONE$" | echo "")
 
 	infobox "Fetching Arch mirror countries with reflector"
 	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRY$" || echo "")
 
 	clear
 
-	if [ -z "$locales" ]; then
+	if [ -z "$timezones" ]; then
+		infobox "The timezone ins invalid, check all valid timezones with the alias: 'get-timezones'"
+		exit 1
+	elif [ -z "$locales" ]; then
 		infobox "The locale is invalid, check all valid locales with the alias: 'get-locales'"
 		exit 1
 	elif [ -z "$keymaps" ]; then
@@ -186,6 +191,14 @@ keymap() {
 	echo "KEYMAP=$KEYMAP" > /mnt/etc/vconsole.conf
 }
 
+timezone() {
+	infobox "Setting timezone"
+	ln -sf /mnt/usr/share/zoneinfo/$TIMEZONE /mnt/etc/localtime
+
+	infobox "Setting hardware clock from system clock"
+	hwclock --systohc
+}
+
 locales() {
 	infobox "Generating locales for '$LOCALE'"
 	sed -i "s/#${LOCALE}/${LOCALE}/" /mnt/etc/locale.gen
@@ -243,6 +256,7 @@ install_packages
 generate_filesystem_table
 bootloader
 keymap
+timezone
 locales
 root_password
 create_user
