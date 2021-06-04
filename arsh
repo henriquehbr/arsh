@@ -145,8 +145,13 @@ formatting() {
 }
 
 mirrors() {
-	# Get the most recently updated mirrors from the specified country
+	infobox "Fetching the most recently updated mirrors from $MIRROR_COUNTRY"
 	reflector --sort age -c "$MIRROR_COUNTRY" --save /etc/pacman.d/mirrorlist
+}
+
+enable_parallel_downloads() {
+	infobox "Enabling pacman parallel downloads"
+	sed -i 's/#ParallelDownloads/ParallelDownloads/g' /etc/pacman.conf
 }
 
 install_base_packages() {
@@ -279,6 +284,7 @@ welcome
 partitioning
 formatting
 mirrors
+enable_parallel_downloads
 install_base_packages
 generate_filesystem_table
 bootloader
