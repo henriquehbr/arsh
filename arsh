@@ -39,7 +39,8 @@ boot_partition=/dev/sda1
 swap_partition=/dev/sda2
 root_partition=/dev/sda3
 
-packages="base linux linux-firmware grub efibootmgr networkmanager dash $cpu_package"
+base_packages="base linux linux-firmware grub efibootmgr networkmanager dash $cpu_package"
+rice_packages="git neovim unzip stow opendoas xorg-xinit dmenu pulseaudio alsa-utils inotify-tools reflector fakeroot binutils exa expect xorg"
 
 # ========== Functions ==========
 
@@ -62,7 +63,7 @@ check_variables() {
 	clear
 
 	if [ -z "$timezones" ]; then
-		infobox "The timezone ins invalid, check all valid timezones with the alias: 'get-timezones'"
+		infobox "The timezone is invalid, check all valid timezones with the alias: 'get-timezones'"
 		exit 1
 	elif [ -z "$locales" ]; then
 		infobox "The locale is invalid, check all valid locales with the alias: 'get-locales'"
@@ -86,7 +87,7 @@ welcome() {
 	echo " Welcome to arsh! "
 	echo "=================="
 	echo "This script will automatically setup an LUKS encrypted Arch Linux installation on your system"
-	echo "If you have any doubts about the installation process, i strongly recommend to installing this"
+	echo "If you have any doubts about the installation process, i strongly recommend installing this"
 	printf "on a virtual machine first, once you start, there's no turning back, the whole process is automated\n\n"
 	printf "%sWARNING: This means your whole disk will be wiped, deleting ALL your data%s\n\n" "$bold" "$normal"
 	read -rp "Do you wanna start the installation? (y/n) " install
@@ -148,7 +149,7 @@ mirrors() {
 	reflector --sort age -c "$MIRROR_COUNTRY" --save /etc/pacman.d/mirrorlist
 }
 
-install_packages() {
+install_base_packages() {
 	infobox "Initialize pacman keyring"
 	pacman-key --init
 
@@ -158,8 +159,8 @@ install_packages() {
 	infobox "Synchronizing package databases"
 	pacman -Sy
 
-	infobox "Installing base system packages: $packages}"
-	pacstrap /mnt $packages
+	infobox "Installing base system packages: $base_packages"
+	pacstrap /mnt $base_packages
 }
 
 generate_filesystem_table() {
@@ -227,13 +228,39 @@ create_user() {
 
 hostname() {
 	infobox "Setting hostname"
-	echo "$HOSTNAME" > /etc/hostname
+	echo "$HOSTNAME" > /mnt/etc/hostname
 
 	infobox "Setting hosts file"
 	cat <<- EOF /mnt/etc/hosts
 		127.0.0.1     localhost
 		::1           localhost
 		127.0.0.1     ${HOSTNAME}.localdomain ${HOSTNAME}
+	EOF
+}
+
+install_rice_packages() {
+	infobox "Installing rice packages"
+	arch-chroot /mnt pacman --noconfirm --needed -S $rice_packages
+}
+
+doas_config() {
+	infobox "Giving super-user permissions to '$USER_NAME'"
+	echo "permit $USER_NAME as root" > /mnt/etc/doas.conf
+}
+
+install_yay() {
+	infobox "Installing 'yay' from source"
+	arch-chroot /mnt su "$USER_NAME" <<- EOF
+		git clone https://aur.archlinux.org/yay-bin.git ~/repos/yay-bin
+
+		cd ~/repos/yay-bin
+		makepkg
+
+		expect <<- DOAS_SCRIPT
+			spawn doas -- pacman --noconfirm -U yay-bin-10.2.3-2-x86_64.pkg.tar.zst
+			expect "doas ($USER_NAME@archlinux)" {send -- "$USER_PASSWORD\r"}
+			expect eof
+		DOAS_SCRIPT
 	EOF
 }
 
@@ -252,7 +279,7 @@ welcome
 partitioning
 formatting
 mirrors
-install_packages
+install_base_packages
 generate_filesystem_table
 bootloader
 keymap
@@ -261,4 +288,7 @@ locales
 root_password
 create_user
 hostname
+install_rice_packages
+doas_config
+install_yay
 post_install
