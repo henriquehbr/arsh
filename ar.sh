@@ -132,7 +132,7 @@ welcome() {
 create_passwords() {
 	password_prompt "ROOT_PASSWORD" "Create the root password: " "Repeat the root password: "
 	password_prompt "USER_PASSWORD" "Create your user ($USER_NAME) password: " "Repeat your user ($USER_NAME) password: "
-	password_prompt "LUKS_PARTITION_PASSWORD" "Create your LUKS partition ($LUKS_PARTITION_NAME) password: " "Reepat your LUKS partition ($LUKS_PARTITION_NAME) password: "
+	password_prompt "LUKS_PARTITION_PASSWORD" "Create your LUKS partition ($LUKS_PARTITION_NAME) password: " "Repeat your LUKS partition ($LUKS_PARTITION_NAME) password: "
 }
 
 partitioning() {
