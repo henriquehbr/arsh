@@ -12,11 +12,8 @@ set -e
 
 # ========== Configuration variables ==========
 
-ROOT_PASSWORD=""
 USER_NAME=""
-USER_PASSWORD=""
 LUKS_PARTITION_NAME=""
-LUKS_PARTITION_PASSWORD=""
 KEYMAP=""
 LOCALE=""
 HOSTNAME=""
@@ -45,11 +42,34 @@ rice_packages="git neovim unzip stow opendoas xorg-xinit dmenu pulseaudio alsa-u
 # ========== Functions ==========
 
 infobox() {
-	border_length=$(( ${#1} + 2))
+	border_length=$(( ${#1} + 2 ))
 	printf "\n%${border_length}s\n" | tr " " "="
 	echo " $1 "
 	printf "%${border_length}s\n\n" | tr " " "="
 }
+
+password_prompt() {
+	while :; do
+		stty -echo
+		printf "\n%s" "$2"
+		read password
+		printf "\n%s" "$3"
+		read repeat_password
+		stty echo
+		echo
+		if [ -z "$password" ] || [ -z "$repeat_password" ]; then
+			printf "\nPassword cannot be empty, please, try again"
+			read retry
+		elif [ "$password" = "$repeat_password" ]; then
+			export "$1"="$password"
+			break
+		else
+			printf "\nPasswords do not match, please, try again"
+			read retry
+		fi
+	done
+}
+
 
 # This might (or might not) be useful in the future
 #run_as_root() {
@@ -86,15 +106,19 @@ check_variables() {
 	elif [ -z "$valid_username" ]; then
 		infobox "Your username is invalid, remember to only use alfanumeric characters, and the first character MUST be a letter"
 		exit 1
-	elif [ -z "$ROOT_PASSWORD" ] || [ -z "$LUKS_PARTITION_NAME" ] || [ -z "$LUKS_PARTITION_PASSWORD" ] || [ -z "$HOSTNAME" ]; then
-		infobox "Check your configuration variables on the beginning of the 'arsh' file, maybe one of them is invalid or undefined"
+	elif [ -z "$LUKS_PARTITION_NAME" ] || [ -z "$HOSTNAME" ]; then
+		infobox "The LUKS partition name and/or hostname are undefined, check your configuration variables at the top of the 'arsh' file"
 		exit 1
 	fi
 }
 
 welcome() {
-	echo " Welcome to arsh! "
-	echo "=================="
+	echo "                 _      "
+	echo "   __ _ _ __ ___| |__   "
+	printf "  / _\` | '__/ __| '_ \  \n"
+	echo " | (_| | |_ \__ \ | | | "
+	echo "  \__,_|_(_)|___/_| |_| "
+	echo
 	echo "This script will automatically setup an LUKS encrypted Arch Linux installation on your system"
 	echo "If you have any doubts about the installation process, i strongly recommend installing this"
 	printf "on a virtual machine first, once you start, there's no turning back, the whole process is automated\n\n"
@@ -103,6 +127,12 @@ welcome() {
 	if echo "$install" | grep -vE "^[yY]$"; then
 		exit
 	fi
+}
+
+create_passwords() {
+	password_prompt "ROOT_PASSWORD" "Create the root password: " "Repeat the root password: "
+	password_prompt "USER_PASSWORD" "Create your user ($USER_NAME) password: " "Repeat your user ($USER_NAME) password: "
+	password_prompt "LUKS_PARTITION_PASSWORD" "Create your LUKS partition ($LUKS_PARTITION_NAME) password: " "Reepat your LUKS partition ($LUKS_PARTITION_NAME) password: "
 }
 
 partitioning() {
@@ -289,6 +319,7 @@ post_install() {
 
 check_variables
 welcome
+create_passwords
 partitioning
 formatting
 mirrors
