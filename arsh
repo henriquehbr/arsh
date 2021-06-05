@@ -51,6 +51,15 @@ infobox() {
 	printf "%${border_length}s\n\n" | tr " " "="
 }
 
+# This might (or might not) be useful in the future
+#run_as_root() {
+#	expect <<- EOF
+#		spawn doas -- $@
+#		expect "doas ($USER_NAME@archlinux)" {send -- "$USER_PASSWORD\r"}
+#		expect eof
+#	EOF
+#}
+
 check_variables() {
 	valid_username=$(echo "$USER_NAME" | grep "^[a-z_][a-z0-9_-]*$" || echo "")
 	keymaps=$(localectl list-keymaps | grep -E "^$KEYMAP$" || echo "")
@@ -149,12 +158,10 @@ mirrors() {
 	reflector --sort age -c "$MIRROR_COUNTRY" --save /etc/pacman.d/mirrorlist
 }
 
-enable_parallel_downloads() {
-	infobox "Enabling pacman parallel downloads"
-	sed -i 's/#ParallelDownloads/ParallelDownloads/g' /etc/pacman.conf
-}
-
 install_base_packages() {
+	infobox "Enabling pacman parallel downloads on arshiso"
+	sed -i 's/#ParallelDownloads/ParallelDownloads/g' /etc/pacman.conf
+
 	infobox "Initialize pacman keyring"
 	pacman-key --init
 
@@ -244,6 +251,9 @@ hostname() {
 }
 
 install_rice_packages() {
+	infobox "Enabling pacman parallel downloads on new system"
+	sed -i 's/#ParallelDownloads/ParallelDownloads/g' /mnt/etc/pacman.conf
+
 	infobox "Installing rice packages"
 	arch-chroot /mnt pacman --noconfirm --needed -S $rice_packages
 }
@@ -254,18 +264,16 @@ doas_config() {
 }
 
 install_yay() {
-	infobox "Installing 'yay' from source"
+	infobox "Cloning 'yay' source repository"
 	arch-chroot /mnt su "$USER_NAME" <<- EOF
 		git clone https://aur.archlinux.org/yay-bin.git ~/repos/yay-bin
-
 		cd ~/repos/yay-bin
 		makepkg
+	EOF
 
-		expect <<- DOAS_SCRIPT
-			spawn doas -- pacman --noconfirm -U yay-bin-10.2.3-2-x86_64.pkg.tar.zst
-			expect "doas ($USER_NAME@archlinux)" {send -- "$USER_PASSWORD\r"}
-			expect eof
-		DOAS_SCRIPT
+	infobox "Installing 'yay' from source"
+	arch-chroot /mnt dash <<- EOF
+		pacman --noconfirm -U /home/henriquehbr/repos/yay-bin/yay-bin-10.2.3-2-x86_64.pkg.tar.zst
 	EOF
 }
 
@@ -284,7 +292,6 @@ welcome
 partitioning
 formatting
 mirrors
-enable_parallel_downloads
 install_base_packages
 generate_filesystem_table
 bootloader
