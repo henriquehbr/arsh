@@ -5,7 +5,7 @@
 By default, arshiso is pre-configured with:
 
 - My actual keyboard layout (br-abnt2)
-- The `arsh` script with execution permissions
+- The `ar.sh` script with execution permissions
 
 And also, **only** the following packages are included:
 

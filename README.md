@@ -1,4 +1,4 @@
-# arsh
+# ar.sh
 
 > Personal Arch Linux installation script
 
@@ -25,7 +25,7 @@ $ make iso
 Basically, what this Makefile task does is:
 
 - Delete any already existing ISO and it's generated files
-- The `arsh` script will also be copied to the ISO root directory
+- The `ar.sh` script will also be copied to the ISO root directory
 - The ISO file is generated on `arshiso/out/arshiso-yyyy.mm.dd-x86_64.iso`
 
 For more technical details regarding arshiso, consider checking the `README` on `archiso` directory
@@ -33,12 +33,12 @@ For more technical details regarding arshiso, consider checking the `README` on 
 #### Script-only
 
 ```bash
-curl -L git.io/J3BJ9 -o arsh
+curl -L git.io/J3BJ9 -o ar.sh
 ```
 
 > `-L` follows redirections
 
-## About the `arsh` script
+## About the `ar.sh` script
 
 This hand-crafted **dash** script performs a slightly opinionated and absolutely-bare-bones LUKS encrypted Arch installation, having only the extreme basics and essentials to make it bootable and connected to the internet, by default, the partitioning is done as the following:
 
