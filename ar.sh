@@ -24,6 +24,7 @@ MIRROR_COUNTRIES=""
 
 bold=$(tput bold)
 normal=$(tput sgr0)
+blue=$(tput setaf 4)
 
 cpu_vendor=$(lscpu | grep GenuineIntel > /dev/null 2>&1 && echo intel || echo amd)
 cpu_package="${cpu_vendor}-ucode"
@@ -110,11 +111,11 @@ check_variables() {
 }
 
 welcome() {
-	echo "                 _      "
+	echo "${blue}                 _      "
 	echo "   __ _ _ __ ___| |__   "
 	printf "  / _\` | '__/ __| '_ \  \n"
 	echo " | (_| | |_ \__ \ | | | "
-	echo "  \__,_|_(_)|___/_| |_| "
+	echo "  \__,_|_(_)|___/_| |_| ${normal}"
 	echo
 	echo "This script will automatically setup an LUKS encrypted Arch Linux installation on your system"
 	echo "If you have any doubts about the installation process, i strongly recommend installing this"
