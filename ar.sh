@@ -45,9 +45,9 @@ aur_packages="lemonbar-xft-git xtitle brave-bin"
 
 infobox() {
 	border_length=$(( ${#1} + 2 ))
-	printf "\n%${border_length}s\n" | tr " " "="
+	printf "\n${bold}%${border_length}s\n" | tr " " "="
 	echo " $1 "
-	printf "%${border_length}s\n\n" | tr " " "="
+	printf "%${border_length}s${normal}\n\n" | tr " " "="
 }
 
 password_prompt() {
