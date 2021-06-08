@@ -7,7 +7,7 @@
 # | | | | |_) | |     https://reddit.com/u/henriquehbr
 # |_| |_|_.__/|_|
 
-# Exit on error
+# Exit on errors
 set -e
 
 # ========== Configuration variables ==========
@@ -18,7 +18,7 @@ KEYMAP=""
 LOCALE=""
 HOSTNAME=""
 TIMEZONE=""
-MIRROR_COUNTRY=""
+MIRROR_COUNTRIES=""
 
 # ========== DO NOT EDIT BELOW THIS LINE ==========
 
@@ -37,7 +37,8 @@ swap_partition=/dev/sda2
 root_partition=/dev/sda3
 
 base_packages="base linux linux-firmware grub efibootmgr networkmanager dash $cpu_package"
-rice_packages="git neovim unzip stow opendoas xorg-xinit dmenu pulseaudio alsa-utils inotify-tools reflector fakeroot binutils exa expect xorg"
+rice_packages="git neovim unzip stow opendoas xorg-xinit dmenu pulseaudio alsa-utils inotify-tools reflector exa expect bspwm sxhkd xdo xorg base-devel"
+aur_packages="lemonbar-xft-git xtitle brave-bin"
 
 # ========== Functions ==========
 
@@ -70,24 +71,20 @@ password_prompt() {
 	done
 }
 
+complete_step() {
+	sed -i "s/^$1$/#$1/" "$0"
+}
 
-# This might (or might not) be useful in the future
-#run_as_root() {
-#	expect <<- EOF
-#		spawn doas -- $@
-#		expect "doas ($USER_NAME@archlinux)" {send -- "$USER_PASSWORD\r"}
-#		expect eof
-#	EOF
-#}
+# ========== Core ==========
 
 check_variables() {
 	valid_username=$(echo "$USER_NAME" | grep "^[a-z_][a-z0-9_-]*$" || echo "")
 	keymaps=$(localectl list-keymaps | grep -E "^$KEYMAP$" || echo "")
-	locales=$(grep -P "#[\S@]" /etc/locale.gen | sed -e s/#//g | cut -d " " -f 1 | grep "^$LOCALE$" || echo "")
+	locales=$(grep -P "#[\S@]" /etc/locale.gen | sed -e "s/#//g" | cut -d " " -f 1 | grep "^$LOCALE$" || echo "")
 	timezones=$(timedatectl list-timezones | grep -E "^$TIMEZONE$" || echo "")
 
 	infobox "Fetching Arch mirror countries with reflector"
-	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRY$" || echo "")
+	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRIES$" || echo "")
 
 	clear
 
@@ -100,8 +97,8 @@ check_variables() {
 	elif [ -z "$keymaps" ]; then
 		infobox "The keyboard layout is invalid, check all valid keyboard layouts with the alias: 'get-keymaps'"
 		exit 1
-	elif [ -z "$mirror_list" ]; then
-		infobox "The mirror country is invalid, check all valid mirror countries with the alias: 'get-mirror-countries'"
+	elif [ ! -z "$MIRROR_COUNTRIES" ] && [ -z "$mirror_list" ]; then
+		infobox "One or more mirror countries are invalid, check all valid mirror countries with the alias: 'get-mirror-countries'"
 		exit 1
 	elif [ -z "$valid_username" ]; then
 		infobox "Your username is invalid, remember to only use alfanumeric characters, and the first character MUST be a letter"
@@ -130,9 +127,14 @@ welcome() {
 }
 
 create_passwords() {
-	password_prompt "ROOT_PASSWORD" "Create the root password: " "Repeat the root password: "
-	password_prompt "USER_PASSWORD" "Create your user ($USER_NAME) password: " "Repeat your user ($USER_NAME) password: "
-	password_prompt "LUKS_PARTITION_PASSWORD" "Create your LUKS partition ($LUKS_PARTITION_NAME) password: " "Repeat your LUKS partition ($LUKS_PARTITION_NAME) password: "
+	while :; do
+		password_prompt "ROOT_PASSWORD" "Create the root password: " "Repeat the root password: "
+		password_prompt "USER_PASSWORD" "Create your user ($USER_NAME) password: " "Repeat your user ($USER_NAME) password: "
+		password_prompt "LUKS_PARTITION_PASSWORD" "Create your LUKS partition ($LUKS_PARTITION_NAME) password: " "Repeat your LUKS partition ($LUKS_PARTITION_NAME) password: "
+		printf "\nAre you sure about the passwords specified? The installation begins after this (y/n) "
+		read confirm_passwords
+		echo "$confirm_passwords" | grep -qvE "^[yY]$" && continue || break
+	done
 }
 
 partitioning() {
@@ -156,6 +158,8 @@ partitioning() {
 	for instruction in $fdisk_instructions; do
 		printf "%s\n" "$instruction" | grep -q "_" && printf "\n" || printf "%s\n" "$instruction"
 	done | fdisk /dev/sda
+
+	complete_step partitioning
 }
 
 formatting() {
@@ -181,11 +185,18 @@ formatting() {
 	infobox "Mount boot partition to /mnt/boot"
 	mkdir /mnt/boot
 	mount $boot_partition /mnt/boot
+
+	complete_step formatting
 }
 
 mirrors() {
-	infobox "Fetching the most recently updated mirrors from $MIRROR_COUNTRY"
-	reflector --sort age -c "$MIRROR_COUNTRY" --save /etc/pacman.d/mirrorlist
+	if [ -z "$MIRROR_COUNTRIES" ]; then
+		infobox "Fetching the most recently updated generic mirrors"
+		reflector --sort age --save /etc/pacman.d/mirrorlist
+	else
+		infobox "Fetching the most recently updated mirrors from $MIRROR_COUNTRIES"
+		reflector --sort age -c "$MIRROR_COUNTRIES" --save /etc/pacman.d/mirrorlist
+	fi
 }
 
 install_base_packages() {
@@ -203,11 +214,15 @@ install_base_packages() {
 
 	infobox "Installing base system packages: $base_packages"
 	pacstrap /mnt $base_packages
+
+	complete_step install_base_packages
 }
 
 generate_filesystem_table() {
 	infobox "Generating filesystem table"
 	genfstab -U /mnt >> /mnt/etc/fstab
+
+	complete_step generate_filesystem_table
 }
 
 bootloader() {
@@ -227,11 +242,15 @@ bootloader() {
 	grub_new_string="GRUB_CMDLINE_LINUX=\"$grub_kernel_parameters\""
 	sed -i "s|$grub_old_string|$grub_new_string|" /mnt/etc/default/grub
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+
+	complete_step bootloader
 }
 
 keymap() {
 	infobox "Saving persistent keyboard layout configuration"
 	echo "KEYMAP=$KEYMAP" > /mnt/etc/vconsole.conf
+
+	complete_step keymap
 }
 
 timezone() {
@@ -240,6 +259,8 @@ timezone() {
 
 	infobox "Setting hardware clock from system clock"
 	hwclock --systohc
+
+	complete_step timezone
 }
 
 locales() {
@@ -251,6 +272,8 @@ locales() {
 
 	infobox "Saving locales configuration on '/etc/locale.conf'"
 	echo "LANG=$LOCALE" | cut -d " " -f 1 > /mnt/etc/locale.conf
+
+	complete_step locales
 }
 
 root_password() {
@@ -258,6 +281,8 @@ root_password() {
 	arch-chroot /mnt dash <<- EOF
 		printf "$ROOT_PASSWORD\n$ROOT_PASSWORD" | passwd
 	EOF
+
+	complete_step root_password
 }
 
 create_user() {
@@ -266,6 +291,8 @@ create_user() {
 	arch-chroot /mnt dash <<- EOF
 		printf "$USER_PASSWORD\n$USER_PASSWORD" | passwd $USER_NAME
 	EOF
+
+	complete_step create_user
 }
 
 hostname() {
@@ -278,19 +305,28 @@ hostname() {
 		::1           localhost
 		127.0.0.1     ${HOSTNAME}.localdomain ${HOSTNAME}
 	EOF
+
+	complete_step hostname
 }
 
 install_rice_packages() {
 	infobox "Enabling pacman parallel downloads on new system"
 	sed -i 's/#ParallelDownloads/ParallelDownloads/g' /mnt/etc/pacman.conf
 
+	infobox "Synchronizing package databases"
+	arch-chroot /mnt pacman -Sy
+
 	infobox "Installing rice packages"
-	arch-chroot /mnt pacman --noconfirm --needed -S $rice_packages
+	arch-chroot /mnt pacman --noconfirm -S $rice_packages
+
+	complete_step install_rice_packages
 }
 
 doas_config() {
 	infobox "Giving super-user permissions to '$USER_NAME'"
 	echo "permit $USER_NAME as root" > /mnt/etc/doas.conf
+
+	complete_step doas_config
 }
 
 install_yay() {
@@ -305,6 +341,35 @@ install_yay() {
 	arch-chroot /mnt dash <<- EOF
 		pacman --noconfirm -U /home/henriquehbr/repos/yay-bin/yay-bin-10.2.3-2-x86_64.pkg.tar.zst
 	EOF
+
+	complete_step install_yay
+}
+
+install_aur_packages() {
+	infobox "Installing AUR rice packages"
+	# Sourcing '/etc/profile' is needed due to pod2man (/usr/bin/core_perl/pod2man) being added in
+	# '/etc/profile.d/perlbin.sh' which is only sourced by a login shell
+	arch-chroot /mnt su "$USER_NAME" <<- EOF
+		cd ~
+		. /etc/profile
+		expect <<- DOAS
+			set timeout -1
+			spawn yay --sudo doas --sudoflags -- --save --removemake --noconfirm -S $aur_packages
+			expect "doas ($USER_NAME@archlinux) password: "
+			send -- "$USER_PASSWORD\r"
+			expect "doas ($USER_NAME@archlinux) password: "
+			send -- "$USER_PASSWORD\r"
+			expect "doas ($USER_NAME@archlinux) password: "
+			send -- "$USER_PASSWORD\r"
+			expect "doas ($USER_NAME@archlinux) password: "
+			send -- "$USER_PASSWORD\r"
+			expect "doas ($USER_NAME@archlinux) password: "
+			send -- "$USER_PASSWORD\r"
+			expect eof
+		DOAS
+	EOF
+
+	complete_step install_aur_packages
 }
 
 post_install() {
@@ -314,8 +379,10 @@ post_install() {
 	infobox "Unmounting root partition from /mnt"
 	umount -l /mnt
 
-	infobox "Installation finished! you might remove the installation media and reboot now"
+	complete_step post_install
 }
+
+# When each one of these steps are completed, they'll automatically be commented out to avoid repetition
 
 check_variables
 welcome
@@ -335,4 +402,7 @@ hostname
 install_rice_packages
 doas_config
 install_yay
+install_aur_packages
 post_install
+
+infobox "Installation finished! you might remove the installation media and reboot now"
