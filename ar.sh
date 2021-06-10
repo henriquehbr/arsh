@@ -134,7 +134,7 @@ create_passwords() {
 		password_prompt "LUKS_PARTITION_PASSWORD" "Create your LUKS partition ($LUKS_PARTITION_NAME) password: " "Repeat your LUKS partition ($LUKS_PARTITION_NAME) password: "
 		printf "\nAre you sure about the passwords specified? The installation begins after this (y/n) "
 		read -r confirm_passwords
-		echo "$confirm_passwords" | grep -qvE "^[yY]$" && continue || break
+		echo "$confirm_passwords" | grep -qvE "^[yY]$" || break
 	done
 }
 
