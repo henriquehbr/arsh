@@ -98,7 +98,7 @@ check_variables() {
 	elif [ -z "$keymaps" ]; then
 		infobox "The keyboard layout is invalid, check all valid keyboard layouts with the alias: 'get-keymaps'"
 		exit 1
-	elif [ ! -z "$MIRROR_COUNTRIES" ] && [ -z "$mirror_list" ]; then
+	elif [ -n "$MIRROR_COUNTRIES" ] && [ -z "$mirror_list" ]; then
 		infobox "One or more mirror countries are invalid, check all valid mirror countries with the alias: 'get-mirror-countries'"
 		exit 1
 	elif [ -z "$valid_username" ]; then
