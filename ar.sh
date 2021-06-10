@@ -378,7 +378,9 @@ deploy_dotfiles() {
 	arch-chroot /mnt su "$USER_NAME" -c "git clone --bare https://github.com/henriquehbr/dotfiles /home/$USER_NAME/repos/dotfiles"
 
 	infobox "Removing possible conflicting dotfiles"
-	rm -vf "$(git ls-tree --full-tree --name-only -r HEAD)"
+	arch-chroot /mnt dash <<- EOF
+		rm -vf "\$(git --git-dir=/home/henriquehbr/repos/dotfiles ls-tree --full-tree --name-only -r HEAD)"
+	EOF
 
 	infobox "Deploying dotfiles to '/home/henriquehbr'"
 	arch-chroot /mnt su "$USER_NAME" -c "/usr/bin/git --git-tree=$HOME/repos/dotfiles --work-tree=$HOME checkout"
