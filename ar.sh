@@ -54,20 +54,20 @@ password_prompt() {
 	while :; do
 		stty -echo
 		printf "\n%s" "$2"
-		read password
+		read -r password
 		printf "\n%s" "$3"
-		read repeat_password
+		read -r repeat_password
 		stty echo
 		echo
 		if [ -z "$password" ] || [ -z "$repeat_password" ]; then
 			printf "\nPassword cannot be empty, please, try again"
-			read retry
+			read -r retry
 		elif [ "$password" = "$repeat_password" ]; then
 			export "$1"="$password"
 			break
 		else
 			printf "\nPasswords do not match, please, try again"
-			read retry
+			read -r retry
 		fi
 	done
 }
@@ -133,7 +133,7 @@ create_passwords() {
 		password_prompt "USER_PASSWORD" "Create your user ($USER_NAME) password: " "Repeat your user ($USER_NAME) password: "
 		password_prompt "LUKS_PARTITION_PASSWORD" "Create your LUKS partition ($LUKS_PARTITION_NAME) password: " "Repeat your LUKS partition ($LUKS_PARTITION_NAME) password: "
 		printf "\nAre you sure about the passwords specified? The installation begins after this (y/n) "
-		read confirm_passwords
+		read -r confirm_passwords
 		echo "$confirm_passwords" | grep -qvE "^[yY]$" && continue || break
 	done
 }
