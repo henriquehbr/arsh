@@ -374,16 +374,12 @@ install_aur_packages() {
 }
 
 deploy_dotfiles() {
-	infobox "Cloning dotfiles repository"
-	arch-chroot /mnt su "$USER_NAME" -c "git clone --bare https://github.com/henriquehbr/dotfiles /home/$USER_NAME/repos/dotfiles"
-
-	infobox "Removing possible conflicting dotfiles"
-	arch-chroot /mnt dash <<- EOF
-		rm -vf "\$(git --git-dir=/home/henriquehbr/repos/dotfiles ls-tree --full-tree --name-only -r HEAD)"
+	infobox "Deploying dotfiles on '/home/henriquehbr'"
+	arch-chroot /mnt su "$USER_NAME" <<- EOF
+		git clone --bare https://github.com/henriquehbr/dotfiles \$HOME/repos/dotfiles
+		rm -f \$(git --git-dir=\$HOME/repos/dotfiles ls-tree --full-tree --name-only -r HEAD | sed -e "s|^|\$HOME/|")
+		git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME checkout
 	EOF
-
-	infobox "Deploying dotfiles to '/home/henriquehbr'"
-	arch-chroot /mnt su "$USER_NAME" -c "/usr/bin/git --git-tree=$HOME/repos/dotfiles --work-tree=$HOME checkout"
 
 	complete_step deploy_dotfiles
 }
