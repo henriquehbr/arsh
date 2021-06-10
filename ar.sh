@@ -373,6 +373,27 @@ install_aur_packages() {
 	complete_step install_aur_packages
 }
 
+deploy_dotfiles() {
+	infobox "Cloning dotfiles repository"
+	arch-chroot /mnt su "$USER_NAME" -c "git clone --bare https://github.com/henriquehbr/dotfiles /home/$USER_NAME/repos"
+
+	infobox "Removing possible conflicting dotfiles"
+	rm -vf "$(git ls-tree --full-tree --name-only -r HEAD)"
+
+	infobox "Deploying dotfiles to '/home/henriquehbr'"
+	arch-chroot /mnt su "$USER_NAME" -c "/usr/bin/git --git-tree=$HOME/repos/dotfiles --work-tree=$HOME checkout"
+
+	complete_step deploy_dotfiles
+}
+
+install_st() {
+	infobox "Installing st (simple terminal) from source"
+	arch-chroot /mnt dash <<- EOF
+		cd /home/henriquehbr/.config/st
+		make clean install
+	EOF
+}
+
 post_install() {
 	infobox "Enabling NetworkManager service"
 	arch-chroot /mnt systemctl enable NetworkManager
@@ -404,6 +425,8 @@ install_rice_packages
 doas_config
 install_yay
 install_aur_packages
+deploy_dotfiles
+install_st
 post_install
 
 infobox "Installation finished! you might remove the installation media and reboot now"
