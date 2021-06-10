@@ -377,8 +377,10 @@ deploy_dotfiles() {
 	infobox "Deploying dotfiles on '/home/henriquehbr'"
 	arch-chroot /mnt su "$USER_NAME" <<- EOF
 		git clone --bare https://github.com/henriquehbr/dotfiles \$HOME/repos/dotfiles
+		alias dots="git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME"
+		dots submodule update --init --recursive
 		rm -f \$(git --git-dir=\$HOME/repos/dotfiles ls-tree --full-tree --name-only -r HEAD | sed -e "s|^|\$HOME/|")
-		git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME checkout
+		dots checkout
 	EOF
 
 	complete_step deploy_dotfiles
@@ -386,9 +388,14 @@ deploy_dotfiles() {
 
 install_st() {
 	infobox "Installing st (simple terminal) from source"
-	arch-chroot /mnt dash <<- EOF
-		cd /home/henriquehbr/.config/st
-		make clean install
+	arch-chroot /mnt su "$USER_NAME" <<- EOF
+		expect <<- DOAS
+			set timeout -1
+			spawn doas -- make -C \$HOME/.config/st clean install
+			expect "doas ($USER_NAME@archlinux) password: "
+			send -- "$USER_PASSWORD\r"
+			expect eof
+		DOAS
 	EOF
 }
 
