@@ -379,8 +379,15 @@ deploy_dotfiles() {
 		git clone --bare https://github.com/henriquehbr/dotfiles \$HOME/repos/dotfiles
 		dots="git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME"
 		cd \$HOME
+
 		\$dots submodule update --init --recursive
-		rm -f \$(\$dots ls-tree --full-tree --name-only -r HEAD | sed -e "s|^|\$HOME/|")
+
+		dotfiles=\$(\$dots ls-tree --full-tree --name-only -r HEAD | sed -e "s|^|\$HOME/|")
+		IFS=$'\n'
+		for dotfile in \$dotfiles; do
+			rm -f "\$dotfile"
+		done
+
 		\$dots checkout
 	EOF
 
