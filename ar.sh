@@ -380,7 +380,7 @@ deploy_dotfiles() {
 		dots="git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME"
 		cd \$HOME
 		\$dots submodule update --init --recursive
-		rm -f \$(git --git-dir=\$HOME/repos/dotfiles ls-tree --full-tree --name-only -r HEAD | sed -e "s|^|\$HOME/|")
+		rm -f \$(\$dots ls-tree --full-tree --name-only -r HEAD | sed -e "s|^|\$HOME/|")
 		\$dots checkout
 	EOF
 
