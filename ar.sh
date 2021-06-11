@@ -377,10 +377,10 @@ deploy_dotfiles() {
 	infobox "Deploying dotfiles on '/home/henriquehbr'"
 	arch-chroot /mnt su "$USER_NAME" <<- EOF
 		git clone --bare https://github.com/henriquehbr/dotfiles \$HOME/repos/dotfiles
-		alias dots="git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME"
-		dots submodule update --init --recursive
+		dots="git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME"
+		\$dots submodule update --init --recursive
 		rm -f \$(git --git-dir=\$HOME/repos/dotfiles ls-tree --full-tree --name-only -r HEAD | sed -e "s|^|\$HOME/|")
-		dots checkout
+		\$dots checkout
 	EOF
 
 	complete_step deploy_dotfiles
