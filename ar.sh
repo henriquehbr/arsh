@@ -409,6 +409,9 @@ post_install() {
 	infobox "Enabling NetworkManager service"
 	arch-chroot /mnt systemctl enable NetworkManager
 
+	infobox "Syncing local time with network time"
+	arch-chroot /mnt timedatectl set-ntp true
+
 	infobox "Unmounting root partition from /mnt"
 	umount -l /mnt
 
