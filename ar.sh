@@ -401,6 +401,8 @@ install_st() {
 			expect eof
 		DOAS
 	EOF
+
+	complete_step install_st
 }
 
 post_install() {
