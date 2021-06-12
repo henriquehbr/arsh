@@ -102,14 +102,14 @@ check_variables() {
 	elif [ -z "$keymaps" ]; then
 		infobox "The keyboard layout is invalid, check all valid keyboard layouts with the alias: 'get-keymaps'"
 		exit 1
-	elif [ -n "$MIRROR_COUNTRIES" ] && [ -z "$mirror_list" ]; then
-		infobox "One or more mirror countries are invalid, check all valid mirror countries with the alias: 'get-mirror-countries'"
-		exit 1
 	elif [ -z "$valid_username" ]; then
 		infobox "Your username is invalid, remember to only use alfanumeric characters, and the first character MUST be a letter"
 		exit 1
 	elif [ -z "$LUKS_PARTITION_NAME" ] || [ -z "$HOSTNAME" ]; then
 		infobox "The LUKS partition name and/or hostname are undefined, check your configuration variables at the top of the 'arsh' file"
+		exit 1
+	elif [ -n "$MIRROR_COUNTRIES" ] && [ -z "$mirror_list" ]; then
+		infobox "One or more mirror countries are invalid, check all valid mirror countries with the alias: 'get-mirror-countries'"
 		exit 1
 	fi
 }
