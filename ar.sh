@@ -373,23 +373,19 @@ install_aur_packages() {
 	complete_step install_aur_packages
 }
 
+dots() {
+	arch-chroot /mnt su "$USER_NAME" -c "git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME $*"
+}
+
 deploy_dotfiles() {
-	infobox "Deploying dotfiles on '/home/henriquehbr'"
-	arch-chroot /mnt su "$USER_NAME" <<- EOF
-		git clone --bare https://github.com/henriquehbr/dotfiles \$HOME/repos/dotfiles
-		dots="git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME"
-		cd \$HOME
+	infobox "Cloning dotfiles repository on '/home/$USER_NAME/repos/dotfiles'"
+	dots clone --bare https://github.com/henriquehbr/dotfiles /home/"$USER_NAME"/repos/dotfiles
 
-		\$dots submodule update --init --recursive
+	infobox "Deploying dotfiles"
+	dots checkout -f
 
-		dotfiles=\$(\$dots ls-tree --full-tree --name-only -r HEAD | sed -e "s|^|\$HOME/|")
-		IFS=$'\n'
-		for dotfile in \$dotfiles; do
-			rm -f "\$dotfile"
-		done
-
-		\$dots checkout
-	EOF
+	infobox "Deploying dotfiles submodules (st)"
+	dots submodule update --init --recursive
 
 	complete_step deploy_dotfiles
 }
