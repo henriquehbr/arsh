@@ -263,7 +263,7 @@ timezone() {
 	ln -sf "/mnt/usr/share/zoneinfo/$TIMEZONE" /mnt/etc/localtime
 
 	infobox "Setting hardware clock from system clock"
-	hwclock --systohc
+	arch-chroot /mnt hwclock --systohc
 
 	complete_step timezone
 }
