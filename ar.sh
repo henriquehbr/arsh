@@ -374,12 +374,12 @@ install_aur_packages() {
 }
 
 dots() {
-	arch-chroot /mnt su "$USER_NAME" -c "git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME $*"
+	arch-chroot /mnt su "$USER_NAME" -c "cd \$HOME ; git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME $*"
 }
 
 deploy_dotfiles() {
 	infobox "Cloning dotfiles repository on '/home/$USER_NAME/repos/dotfiles'"
-	dots clone --bare https://github.com/henriquehbr/dotfiles /home/"$USER_NAME"/repos/dotfiles
+	git clone --bare https://github.com/henriquehbr/dotfiles /home/"$USER_NAME"/repos/dotfiles
 
 	infobox "Deploying dotfiles"
 	dots checkout -f
