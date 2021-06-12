@@ -22,3 +22,5 @@ arch-install-scripts
 # Required for putting wireless device out of "generic mode" due to regulatory domain law
 # https://wiki.archlinux.org/title/Network_configuration/Wireless#Respecting_the_regulatory_domain
 crda
+# Allows connecting to internet via Wifi/Ethernet
+networkmanager
