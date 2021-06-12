@@ -379,7 +379,7 @@ install_aur_packages() {
 
 deploy_dotfiles() {
 	infobox "Cloning dotfiles repository on '/home/$USER_NAME/repos/dotfiles'"
-	git clone --bare https://github.com/henriquehbr/dotfiles /home/"$USER_NAME"/repos/dotfiles
+	arch-chroot /mnt su "$USER_NAME" -c "git clone --bare https://github.com/henriquehbr/dotfiles \$HOME/repos/dotfiles"
 
 	infobox "Deploying dotfiles"
 	dots checkout -f
