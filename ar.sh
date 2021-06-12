@@ -76,6 +76,10 @@ complete_step() {
 	sed -i "s/^$1$/#$1/" "$0"
 }
 
+dots() {
+	arch-chroot /mnt su "$USER_NAME" -c "cd \$HOME ; git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME $*"
+}
+
 # ========== Core ==========
 
 check_variables() {
@@ -371,10 +375,6 @@ install_aur_packages() {
 	EOF
 
 	complete_step install_aur_packages
-}
-
-dots() {
-	arch-chroot /mnt su "$USER_NAME" -c "cd \$HOME ; git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME $*"
 }
 
 deploy_dotfiles() {
