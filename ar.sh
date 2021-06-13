@@ -72,8 +72,10 @@ password_prompt() {
 	done
 }
 
-complete_step() {
-	sed -i "s/^$1$/#$1/" "$0"
+complete_steps() {
+	for step in "$@"; do
+		sed -i "s/^$step$/#$step/" "$0"
+	done
 }
 
 dots() {
@@ -164,7 +166,7 @@ partitioning() {
 		printf "%s\n" "$instruction" | grep -q "_" && printf "\n" || printf "%s\n" "$instruction"
 	done | fdisk /dev/sda
 
-	complete_step partitioning
+	complete_steps partitioning
 }
 
 formatting() {
@@ -191,7 +193,7 @@ formatting() {
 	mkdir /mnt/boot
 	mount $boot_partition /mnt/boot
 
-	complete_step formatting
+	complete_steps formatting
 }
 
 mirrors() {
@@ -220,14 +222,14 @@ install_base_packages() {
 	infobox "Installing base system packages: $base_packages"
 	pacstrap /mnt $base_packages
 
-	complete_step install_base_packages
+	complete_steps install_base_packages
 }
 
 generate_filesystem_table() {
 	infobox "Generating filesystem table"
 	genfstab -U /mnt >> /mnt/etc/fstab
 
-	complete_step generate_filesystem_table
+	complete_steps generate_filesystem_table
 }
 
 bootloader() {
@@ -248,14 +250,14 @@ bootloader() {
 	sed -i "s|$grub_old_string|$grub_new_string|" /mnt/etc/default/grub
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
-	complete_step bootloader
+	complete_steps bootloader
 }
 
 keymap() {
 	infobox "Saving persistent keyboard layout configuration"
 	echo "KEYMAP=$KEYMAP" > /mnt/etc/vconsole.conf
 
-	complete_step keymap
+	complete_steps keymap
 }
 
 timezone() {
@@ -265,7 +267,7 @@ timezone() {
 	infobox "Setting hardware clock from system clock"
 	arch-chroot /mnt hwclock --systohc
 
-	complete_step timezone
+	complete_steps timezone
 }
 
 locales() {
@@ -278,7 +280,7 @@ locales() {
 	infobox "Saving locales configuration on '/etc/locale.conf'"
 	echo "LANG=$LOCALE" | cut -d " " -f 1 > /mnt/etc/locale.conf
 
-	complete_step locales
+	complete_steps locales
 }
 
 root_password() {
@@ -287,7 +289,7 @@ root_password() {
 		printf "$ROOT_PASSWORD\n$ROOT_PASSWORD" | passwd
 	EOF
 
-	complete_step root_password
+	complete_steps root_password
 }
 
 create_user() {
@@ -297,8 +299,7 @@ create_user() {
 		printf "$USER_PASSWORD\n$USER_PASSWORD" | passwd $USER_NAME
 	EOF
 
-	complete_step create_user
-	complete_step check_variables
+	complete_steps create_user check_variables
 }
 
 hostname() {
@@ -312,7 +313,7 @@ hostname() {
 		127.0.0.1     ${HOSTNAME}.localdomain ${HOSTNAME}
 	EOF
 
-	complete_step hostname
+	complete_steps hostname
 }
 
 install_rice_packages() {
@@ -325,14 +326,14 @@ install_rice_packages() {
 	infobox "Installing rice packages"
 	arch-chroot /mnt pacman --noconfirm -S $rice_packages
 
-	complete_step install_rice_packages
+	complete_steps install_rice_packages
 }
 
 doas_config() {
 	infobox "Giving super-user permissions to '$USER_NAME'"
 	echo "permit $USER_NAME as root" > /mnt/etc/doas.conf
 
-	complete_step doas_config
+	complete_steps doas_config
 }
 
 install_yay() {
@@ -348,7 +349,7 @@ install_yay() {
 		pacman --noconfirm -U /home/henriquehbr/repos/yay-bin/yay-bin-10.2.3-2-x86_64.pkg.tar.zst
 	EOF
 
-	complete_step install_yay
+	complete_steps install_yay
 }
 
 install_aur_packages() {
@@ -375,7 +376,7 @@ install_aur_packages() {
 		DOAS
 	EOF
 
-	complete_step install_aur_packages
+	complete_steps install_aur_packages
 }
 
 deploy_dotfiles() {
@@ -388,7 +389,7 @@ deploy_dotfiles() {
 	infobox "Deploying dotfiles submodules (st)"
 	dots submodule update --init --recursive
 
-	complete_step deploy_dotfiles
+	complete_steps deploy_dotfiles
 }
 
 install_st() {
@@ -403,7 +404,7 @@ install_st() {
 		DOAS
 	EOF
 
-	complete_step install_st
+	complete_steps install_st
 }
 
 post_install() {
@@ -416,7 +417,7 @@ post_install() {
 	infobox "Unmounting root partition from /mnt"
 	umount -l /mnt
 
-	complete_step post_install
+	complete_steps post_install
 }
 
 # When each one of these steps are completed, they'll automatically be commented out to avoid repetition
