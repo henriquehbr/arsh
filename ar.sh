@@ -298,6 +298,7 @@ create_user() {
 	EOF
 
 	complete_step create_user
+	complete_step check_variables
 }
 
 hostname() {
