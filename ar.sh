@@ -424,6 +424,8 @@ post_install() {
 
 # When each one of these steps are completed, they'll automatically be commented out to avoid repetition
 
+clear
+
 check_variables
 welcome
 create_passwords
