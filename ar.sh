@@ -90,8 +90,6 @@ check_variables() {
 	locales=$(grep -P "#[\S@]" /etc/locale.gen | sed -e "s/#//g" | cut -d " " -f 1 | grep "^$LOCALE$" || echo "")
 	timezones=$(timedatectl list-timezones | grep -E "^$TIMEZONE$" || echo "")
 
-	clear
-
 	if [ -z "$timezones" ]; then
 		infobox "The timezone is invalid, check all valid timezones with the alias: 'get-timezones'"
 		exit 1
@@ -119,6 +117,7 @@ check_variables() {
 }
 
 welcome() {
+	clear
 	echo "${blue}                 _      "
 	echo "   __ _ _ __ ___| |__   "
 	printf "  / _\` | '__/ __| '_ \  \n"
