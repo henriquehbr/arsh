@@ -82,6 +82,21 @@ dots() {
 	arch-chroot /mnt su "$USER_NAME" -c "cd \$HOME ; git --git-dir=\$HOME/repos/dotfiles --work-tree=\$HOME $*"
 }
 
+doas_prompt() {
+	cat <<- EOF
+		expect <<- DOAS
+			set timeout -1
+			spawn doas -- $@
+			expect {
+				"doas ($USER_NAME@archlinux) password: " {
+					send "$USER_PASSWORD\r"
+					exp_continue
+				}
+			}
+		DOAS
+	EOF
+}
+
 # ========== Core ==========
 
 check_variables() {
@@ -396,13 +411,7 @@ deploy_dotfiles() {
 install_st() {
 	infobox "Installing st (simple terminal) from source"
 	arch-chroot /mnt su "$USER_NAME" <<- EOF
-		expect <<- DOAS
-			set timeout -1
-			spawn doas -- make -C \$HOME/.config/st clean install
-			expect "doas ($USER_NAME@archlinux) password: "
-			send -- "$USER_PASSWORD\r"
-			expect eof
-		DOAS
+		$(doas_prompt make -C "\$HOME/.config/st" clean install)
 	EOF
 
 	complete_steps install_st
