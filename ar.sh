@@ -422,7 +422,9 @@ post_install() {
 	arch-chroot /mnt systemctl enable NetworkManager
 
 	infobox "Syncing local time with network time"
-	arch-chroot /mnt timedatectl set-ntp true
+	arch-chroot /mnt su "$USER_NAME" <<- EOF
+		$(doas_prompt timedatectl set-ntp true)
+	EOF
 
 	infobox "Unmounting root partition from /mnt"
 	umount -l /mnt
