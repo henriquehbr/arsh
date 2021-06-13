@@ -90,9 +90,6 @@ check_variables() {
 	locales=$(grep -P "#[\S@]" /etc/locale.gen | sed -e "s/#//g" | cut -d " " -f 1 | grep "^$LOCALE$" || echo "")
 	timezones=$(timedatectl list-timezones | grep -E "^$TIMEZONE$" || echo "")
 
-	infobox "Fetching Arch mirror countries with reflector"
-	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRIES$" || echo "")
-
 	clear
 
 	if [ -z "$timezones" ]; then
@@ -110,7 +107,12 @@ check_variables() {
 	elif [ -z "$LUKS_PARTITION_NAME" ] || [ -z "$HOSTNAME" ]; then
 		infobox "The LUKS partition name and/or hostname are undefined, check your configuration variables at the top of the 'arsh' file"
 		exit 1
-	elif [ -n "$MIRROR_COUNTRIES" ] && [ -z "$mirror_list" ]; then
+	fi
+
+	infobox "Fetching Arch mirror countries with reflector"
+	mirror_list=$(reflector --list-countries | sed -E 's/  +/,/g' | cut -d "," -f 1 | sed 1,2d | grep -E "^$MIRROR_COUNTRIES$" || echo "")
+
+	if [ -n "$MIRROR_COUNTRIES" ] && [ -z "$mirror_list" ]; then
 		infobox "One or more mirror countries are invalid, check all valid mirror countries with the alias: 'get-mirror-countries'"
 		exit 1
 	fi
