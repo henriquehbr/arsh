@@ -373,23 +373,8 @@ install_aur_packages() {
 	# Sourcing '/etc/profile' is needed due to pod2man (/usr/bin/core_perl/pod2man) being added in
 	# '/etc/profile.d/perlbin.sh' which is only sourced by a login shell
 	arch-chroot /mnt su "$USER_NAME" <<- EOF
-		cd ~
 		. /etc/profile
-		expect <<- DOAS
-			set timeout -1
-			spawn yay --sudo doas --sudoflags -- --save --removemake --noconfirm -S $aur_packages
-			expect "doas ($USER_NAME@archlinux) password: "
-			send -- "$USER_PASSWORD\r"
-			expect "doas ($USER_NAME@archlinux) password: "
-			send -- "$USER_PASSWORD\r"
-			expect "doas ($USER_NAME@archlinux) password: "
-			send -- "$USER_PASSWORD\r"
-			expect "doas ($USER_NAME@archlinux) password: "
-			send -- "$USER_PASSWORD\r"
-			expect "doas ($USER_NAME@archlinux) password: "
-			send -- "$USER_PASSWORD\r"
-			expect eof
-		DOAS
+		$(doas-prompt yay --sudo doas --sudoflags -- --save --removemake --noconfirm -S $aur_packages)
 	EOF
 
 	complete_steps install_aur_packages
