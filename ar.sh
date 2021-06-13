@@ -86,7 +86,7 @@ doas_prompt() {
 	cat <<- EOF
 		expect <<- DOAS
 			set timeout -1
-			spawn doas -- $@
+			spawn $@
 			expect {
 				"doas ($USER_NAME@archlinux) password: " {
 					send "$USER_PASSWORD\r"
@@ -411,7 +411,7 @@ deploy_dotfiles() {
 install_st() {
 	infobox "Installing st (simple terminal) from source"
 	arch-chroot /mnt su "$USER_NAME" <<- EOF
-		$(doas_prompt make -C "\$HOME/.config/st" clean install)
+		$(doas_prompt doas -- make -C "\$HOME/.config/st" clean install)
 	EOF
 
 	complete_steps install_st
@@ -423,7 +423,7 @@ post_install() {
 
 	infobox "Syncing local time with network time"
 	arch-chroot /mnt su "$USER_NAME" <<- EOF
-		$(doas_prompt timedatectl set-ntp true)
+		$(doas_prompt doas -- timedatectl set-ntp true)
 	EOF
 
 	infobox "Unmounting root partition from /mnt"
