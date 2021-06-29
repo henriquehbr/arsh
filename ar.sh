@@ -278,7 +278,7 @@ keymap() {
 
 timezone() {
 	infobox "Setting timezone"
-	ln -sf "/mnt/usr/share/zoneinfo/$TIMEZONE" /mnt/etc/localtime
+	ln -sf "/usr/share/zoneinfo/$TIMEZONE" /mnt/etc/localtime
 
 	infobox "Setting hardware clock from system clock"
 	arch-chroot /mnt hwclock --systohc
@@ -407,9 +407,7 @@ post_install() {
 	arch-chroot /mnt systemctl enable NetworkManager
 
 	infobox "Syncing local time with network time"
-	arch-chroot /mnt su "$USER_NAME" <<- EOF
-		$(doas_prompt doas -- timedatectl set-ntp true)
-	EOF
+	arch-chroot /mnt systemctl enable systemd-timesyncd
 
 	infobox "Unmounting root partition from /mnt"
 	umount -l /mnt
