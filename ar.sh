@@ -415,7 +415,8 @@ post_install() {
 	complete_steps post_install
 }
 
-# When each one of these steps are completed, they'll automatically be commented out to avoid repetition
+# When each one of these steps are completed, they'll automatically be commented out to avoid repetitions
+# (which certainly won't work, or might even break the current installation) on subsequent executions
 
 clear
 
