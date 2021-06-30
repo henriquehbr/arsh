@@ -38,7 +38,7 @@ swap_partition=/dev/sda2
 root_partition=/dev/sda3
 
 base_packages="base linux linux-firmware grub efibootmgr networkmanager dash $cpu_package"
-rice_packages="git neovim unzip stow opendoas xorg-xinit dmenu pulseaudio alsa-utils inotify-tools reflector exa expect bspwm sxhkd xdo xorg base-devel"
+rice_packages="git neovim unzip stow opendoas xorg-xinit dmenu pulseaudio alsa-utils inotify-tools reflector exa expect bspwm sxhkd xdo xorg base-devel zsh zsh-completions"
 aur_packages="lemonbar-xft-git xtitle brave-bin"
 
 # ========== Functions ==========
@@ -345,6 +345,19 @@ install_rice_packages() {
 	complete_steps install_rice_packages
 }
 
+setup_zsh() {
+	infobox "Setting zsh as the default interactive shell"
+	arch-chroot /mnt su "$USER_NAME" <<- EOF
+		expect <<- PASS
+			spawn chsh -s /usr/bin/zsh
+			expect "Password: "
+			send "$USER_PASSWORD\r"
+			expect eof
+		PASS
+	EOF
+	complete_steps setup_zsh
+}
+
 doas_config() {
 	infobox "Giving super-user permissions to '$USER_NAME'"
 	echo "permit $USER_NAME as root" > /mnt/etc/doas.conf
@@ -436,6 +449,7 @@ root_password
 create_user
 hostname
 install_rice_packages
+setup_zsh
 doas_config
 install_yay
 install_aur_packages
