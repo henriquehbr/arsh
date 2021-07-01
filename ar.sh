@@ -342,6 +342,9 @@ install_rice_packages() {
 	infobox "Installing rice packages"
 	arch-chroot /mnt pacman --noconfirm -S $rice_packages
 
+	infobox "Removing 'sudo' from 'base-devel'"
+	arch-chroot /mnt pacman --noconfirm -R sudo
+
 	complete_steps install_rice_packages
 }
 
