@@ -391,7 +391,7 @@ install_aur_packages() {
 	# '/etc/profile.d/perlbin.sh' which is only sourced by a login shell
 	arch-chroot /mnt su "$USER_NAME" <<- EOF
 		. /etc/profile
-		$(doas_prompt paru --sudo doas --sudoflags -- --save --removemake --cleanafter --noconfirm -S $aur_packages)
+		$(doas_prompt paru --sudo doas --sudoflags -- --removemake --cleanafter --noconfirm -S $aur_packages)
 	EOF
 
 	complete_steps install_aur_packages
