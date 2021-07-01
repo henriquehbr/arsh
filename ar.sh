@@ -365,20 +365,21 @@ doas_config() {
 	complete_steps doas_config
 }
 
-install_yay() {
-	infobox "Cloning 'yay' source repository"
+install_paru() {
+	infobox "Installing 'paru' AUR helper"
 	arch-chroot /mnt su "$USER_NAME" <<- EOF
-		git clone https://aur.archlinux.org/yay-bin.git ~/repos/yay-bin
-		cd ~/repos/yay-bin
-		makepkg
+		git clone https://aur.archlinux.org/paru-bin.git ~/repos/paru-bin
+		cd ~/repos/paru-bin
+
+		expect <<- DOAS
+			spawn makepkg --noconfirm -si
+			expect "Password: "
+			send "$ROOT_PASSWORD\r"
+			expect eof
+		DOAS
 	EOF
 
-	infobox "Installing 'yay' from source"
-	arch-chroot /mnt dash <<- EOF
-		pacman --noconfirm -U /home/henriquehbr/repos/yay-bin/yay-bin-10.2.3-2-x86_64.pkg.tar.zst
-	EOF
-
-	complete_steps install_yay
+	complete_steps install_paru
 }
 
 install_aur_packages() {
@@ -387,7 +388,7 @@ install_aur_packages() {
 	# '/etc/profile.d/perlbin.sh' which is only sourced by a login shell
 	arch-chroot /mnt su "$USER_NAME" <<- EOF
 		. /etc/profile
-		$(doas_prompt yay --sudo doas --sudoflags -- --save --removemake --noconfirm -S $aur_packages)
+		$(doas_prompt paru --sudo doas --sudoflags -- --save --removemake --cleanafter --noconfirm -S $aur_packages)
 	EOF
 
 	complete_steps install_aur_packages
@@ -451,7 +452,7 @@ hostname
 install_rice_packages
 setup_zsh
 doas_config
-install_yay
+install_paru
 install_aur_packages
 deploy_dotfiles
 install_st
