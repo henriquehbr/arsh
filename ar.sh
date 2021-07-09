@@ -143,7 +143,7 @@ welcome() {
 	echo "If you have any doubts about the installation process, i strongly recommend installing this"
 	printf "on a virtual machine first, once you start, there's no turning back, the whole process is automated\n\n"
 	printf "%sWARNING: This means your whole disk will be wiped, deleting ALL your data%s\n\n" "$bold" "$normal"
-	read -rp "Do you wanna start the installation? (y/n) " install
+	read -rp "Do you wanna start the installation? (y/N) " install
 	if echo "$install" | grep -vE "^[yY]$"; then
 		exit
 	fi
@@ -154,7 +154,7 @@ create_passwords() {
 		password_prompt "ROOT_PASSWORD" "Create the root password: " "Repeat the root password: "
 		password_prompt "USER_PASSWORD" "Create your user ($USER_NAME) password: " "Repeat your user ($USER_NAME) password: "
 		password_prompt "LUKS_PARTITION_PASSWORD" "Create your LUKS partition ($LUKS_PARTITION_NAME) password: " "Repeat your LUKS partition ($LUKS_PARTITION_NAME) password: "
-		printf "\nAre you sure about the passwords specified? The installation begins after this (y/n) "
+		printf "\nAre you sure about the passwords specified? The installation begins after this (y/N) "
 		read -r confirm_passwords
 		echo "$confirm_passwords" | grep -qvE "^[yY]$" || break
 	done
