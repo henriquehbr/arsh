@@ -73,19 +73,24 @@ The following packages are the ones that makes the system usable as a daily driv
 - [`unzip`](https://archlinux.org/packages/extra/x86_64/unzip/) - For extracting and viewing files in .zip archives
 - [`stow`](https://archlinux.org/packages/community/any/stow/) - Manage installation of multiple softwares in the same directory tree
 - [`opendoas`](https://archlinux.org/packages/community/x86_64/opendoas/) - Run commands as super user or another user
-- [`xorg-xinit`](https://archlinux.org/packages/extra/x86_64/xorg-xinit/) - X.Org initialisation program
+- [`xorg-xauth`](https://archlinux.org/packages/extra/x86_64/xorg-xauth/) - X.Org authorization settings program
+- [`sx`](https://archlinux.org/packages/community/any/sx/) - Simple alternative to startx(1) for starting an Xorg server
 - [`dmenu`](https://archlinux.org/packages/community/x86_64/dmenu/) - Generic menu for X
 - [`pulseaudio`](https://archlinux.org/packages/extra/x86_64/pulseaudio/) - A featureful, general-purpose sound server
 - [`alsa-utils`](https://archlinux.org/packages/extra/x86_64/alsa-utils/) - Advanced Linux Sound Architecture - Utilities
 - [`inotify-tools`](https://archlinux.org/packages/community/x86_64/inotify-tools/) - inotify-tools is a C library and a set of command-line programs for Linux providing a simple interface to inotify
 - [`reflector`](https://archlinux.org/packages/community/any/reflector/) - A Python 3 module and script to retrieve and filter the latest Pacman mirror list
-- [`base-devel`](https://archlinux.org/groups/x86_64/base-devel/) - Group of packages for building (compiling and linking)
 - [`exa`](https://archlinux.org/packages/community/x86_64/exa/) - ls replacement
 - [`expect`](https://archlinux.org/packages/extra/x86_64/expect/) - A tool for automating interactive applications
 - [`xorg`](https://archlinux.org/groups/x86_64/xorg/) - X.org package group
 - [`bspwm`](https://archlinux.org/packages/community/x86_64/bspwm/) - Tiling window manager based on binary space partitioning
 - [`sxhkd`](https://archlinux.org/packages/community/x86_64/sxhkd/) - Simple X hotke daemon
 - [`xdo`](https://archlinux.org/packages/community/x86_64/xdo/) - Utility for performing actions on windows in X
+- [`base-devel`](https://archlinux.org/groups/x86_64/base-devel/) - Tools needed for building (compiling and linking)
+- [`zsh`](https://archlinux.org/packages/extra/x86_64/zsh/) - A very advanced and programmable command interpreter (shell) for UNIX
+- [`zsh-completions`](https://archlinux.org/packages/community/any/zsh-completions/) - Additional completion definitions for Zsh
+- [`scrot`](https://archlinux.org/packages/community/x86_64/scrot/) - Simple command-line screenshot utility for X
+- [`fzf`](https://archlinux.org/packages/community/x86_64/fzf/) - Command-line fuzzy finder
 
 #### AUR
 
