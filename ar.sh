@@ -38,7 +38,7 @@ swap_partition=/dev/sda2
 root_partition=/dev/sda3
 
 base_packages="base linux linux-firmware grub efibootmgr networkmanager dash $cpu_package"
-rice_packages="git neovim unzip stow opendoas xorg-xauth sx dmenu pulseaudio alsa-utils inotify-tools reflector expect bspwm sxhkd xdo xorg base-devel zsh zsh-completions scrot"
+rice_packages="git neovim unzip stow opendoas xorg-xauth sx dmenu pulseaudio alsa-utils inotify-tools reflector expect bspwm sxhkd xdo xorg base-devel zsh zsh-completions scrot fzf"
 aur_packages="lemonbar-xft-git xtitle brave-bin"
 
 # ========== Functions ==========
