@@ -401,6 +401,9 @@ deploy_dotfiles() {
 	infobox "Cloning dotfiles repository on '/home/$USER_NAME/repos/dots'"
 	arch-chroot /mnt su "$USER_NAME" -c "git clone --bare https://github.com/henriquehbr/dots \$HOME/repos/dots"
 
+	infobox "Removing possibly conflicting dotfiles submodules"
+	arch-chroot /mnt rm -rf $(dots submodule--helper list | awk '{print $4}')
+
 	infobox "Deploying dotfiles"
 	dots checkout -f
 
