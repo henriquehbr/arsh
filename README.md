@@ -91,6 +91,8 @@ The following packages are the ones that makes the system usable as a daily driv
 - [`zsh-completions`](https://archlinux.org/packages/community/any/zsh-completions/) - Additional completion definitions for Zsh
 - [`scrot`](https://archlinux.org/packages/community/x86_64/scrot/) - Simple command-line screenshot utility for X
 - [`fzf`](https://archlinux.org/packages/community/x86_64/fzf/) - Command-line fuzzy finder
+- [`dunst`](https://archlinux.org/packages/community/x86_64/dunst/) - Customizable and lightweight notification-daemon
+- [`libnotify`](https://archlinux.org/packages/extra/x86_64/libnotify/) - Library for sending desktop notifications
 
 #### AUR
 
