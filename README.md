@@ -71,7 +71,6 @@ The following packages are the ones that makes the system usable as a daily driv
 - [`git`](https://archlinux.org/packages/extra/x86_64/git/) - The fast distributed version control system
 - [`neovim`](https://archlinux.org/packages/community/x86_64/neovim/) - Fork of Vim aiming to improve user experience, plugins, and GUIs
 - [`unzip`](https://archlinux.org/packages/extra/x86_64/unzip/) - For extracting and viewing files in .zip archives
-- [`stow`](https://archlinux.org/packages/community/any/stow/) - Manage installation of multiple softwares in the same directory tree
 - [`opendoas`](https://archlinux.org/packages/community/x86_64/opendoas/) - Run commands as super user or another user
 - [`xorg-xauth`](https://archlinux.org/packages/extra/x86_64/xorg-xauth/) - X.Org authorization settings program
 - [`sx`](https://archlinux.org/packages/community/any/sx/) - Simple alternative to startx(1) for starting an Xorg server
