@@ -79,7 +79,6 @@ The following packages are the ones that makes the system usable as a daily driv
 - [`alsa-utils`](https://archlinux.org/packages/extra/x86_64/alsa-utils/) - Advanced Linux Sound Architecture - Utilities
 - [`inotify-tools`](https://archlinux.org/packages/community/x86_64/inotify-tools/) - inotify-tools is a C library and a set of command-line programs for Linux providing a simple interface to inotify
 - [`reflector`](https://archlinux.org/packages/community/any/reflector/) - A Python 3 module and script to retrieve and filter the latest Pacman mirror list
-- [`exa`](https://archlinux.org/packages/community/x86_64/exa/) - ls replacement
 - [`expect`](https://archlinux.org/packages/extra/x86_64/expect/) - A tool for automating interactive applications
 - [`xorg`](https://archlinux.org/groups/x86_64/xorg/) - X.org package group
 - [`bspwm`](https://archlinux.org/packages/community/x86_64/bspwm/) - Tiling window manager based on binary space partitioning
