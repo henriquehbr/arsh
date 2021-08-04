@@ -83,7 +83,7 @@ The following packages are the ones that makes the system usable as a daily driv
 - [`expect`](https://archlinux.org/packages/extra/x86_64/expect/) - A tool for automating interactive applications
 - [`xorg`](https://archlinux.org/groups/x86_64/xorg/) - X.org package group
 - [`bspwm`](https://archlinux.org/packages/community/x86_64/bspwm/) - Tiling window manager based on binary space partitioning
-- [`sxhkd`](https://archlinux.org/packages/community/x86_64/sxhkd/) - Simple X hotke daemon
+- [`sxhkd`](https://archlinux.org/packages/community/x86_64/sxhkd/) - Simple X hotkey daemon
 - [`xdo`](https://archlinux.org/packages/community/x86_64/xdo/) - Utility for performing actions on windows in X
 - [`base-devel`](https://archlinux.org/groups/x86_64/base-devel/) - Tools needed for building (compiling and linking)
 - [`zsh`](https://archlinux.org/packages/extra/x86_64/zsh/) - A very advanced and programmable command interpreter (shell) for UNIX
