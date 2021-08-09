@@ -39,7 +39,7 @@ root_partition=/dev/sda3
 
 base_packages="base linux linux-firmware grub efibootmgr networkmanager dash $cpu_package"
 rice_packages="git neovim unzip opendoas xorg-xauth sx dmenu pulseaudio alsa-utils inotify-tools reflector expect xorg bspwm sxhkd xdo base-devel zsh zsh-completions scrot fzf dunst libnotify fff"
-aur_packages="lemonbar-xft-git xtitle brave-bin"
+aur_packages="lemonbar-xft-git brave-bin"
 
 # ========== Functions ==========
 

@@ -98,5 +98,4 @@ The following packages are the ones that makes the system usable as a daily driv
 Those are retrieved from the Arch User Repository (AUR):
 
 - [`lemonbar-xft-git`](https://aur.archlinux.org/packages/lemonbar-xft-git/) - A lightweight xcb based bar with ported xft support
-- [`xtitle`](https://aur.archlinux.org/packages/xtitle/) - Outputs X window titles
 - [`brave-bin`](https://aur.archlinux.org/packages/brave-bin/) - Web browser that blocks ads and trackers by default (binary release)
