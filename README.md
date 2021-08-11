@@ -14,7 +14,7 @@
 
 #### Recommended way
 
-It's strongly advised to use arshiso instead of Arch's official ones, due to the fact that the first is way more minimal (390MB) in contrast to the latter (755MB) and contain only the bare-minimum required packages to setup the whole installation process, resulting in a much smoother and fast experience
+It's strongly advised to use arshiso instead of Arch's official ones, due to the fact that the first is way more minimal (405MB) in contrast to the latter (755MB) and contain only the bare-minimum required packages to setup the whole installation process, resulting in a much smoother and fast experience
 
 In order to generate arshiso, clone this repository and run:
 
