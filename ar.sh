@@ -358,6 +358,10 @@ setup_zsh() {
 			expect eof
 		PASS
 	EOF
+
+	infobox "Removing bash files at /home/$USER_NAME"
+	rm /mnt/home/$USER_NAME/.bash*
+
 	complete_steps setup_zsh
 }
 
