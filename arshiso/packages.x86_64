@@ -24,3 +24,5 @@ arch-install-scripts
 crda
 # Allows connecting to internet via Wifi/Ethernet
 networkmanager
+# Required for providing general hardware support (network card for instance)
+linux-firmware
