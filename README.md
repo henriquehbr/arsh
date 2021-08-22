@@ -5,7 +5,7 @@
 ## Requirements
 
 - An computer with UEFI support, at least 512MB of RAM and 2GB of disk space
-- Any bootable media (USB drive) with at least 512MB of storage space ([Recommended way](#recommended-way))
+- Any bootable media (USB drive) with at least 1GB of storage space ([Recommended way](#recommended-way))
 - [`dash`](https://archlinux.org/packages/core/x86_64/dash/) ([Script-only way](#script-only-way))
 
 > You can verify that by running `ls /sys/firmware | grep efi`, if a directory called `efi` is returned, then you're good to go
