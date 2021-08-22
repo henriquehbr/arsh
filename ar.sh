@@ -38,7 +38,7 @@ swap_partition=/dev/sda2
 root_partition=/dev/sda3
 
 base_packages="base linux linux-firmware grub efibootmgr networkmanager dash $cpu_package"
-rice_packages="git neovim unzip opendoas xorg-xauth sx dmenu pulseaudio alsa-utils inotify-tools reflector expect xorg bspwm sxhkd xdo base-devel zsh zsh-completions scrot fzf dunst libnotify"
+rice_packages="git neovim unzip opendoas xorg-xauth sx dmenu pulseaudio alsa-utils inotify-tools reflector expect xorg bspwm sxhkd xdo base-devel fis scrot fzf dunst libnotify"
 aur_packages="lemonbar-xft-git brave-bin"
 
 # ========== Functions ==========
@@ -348,23 +348,6 @@ install_rice_packages() {
 	complete_steps install_rice_packages
 }
 
-setup_zsh() {
-	infobox "Setting zsh as the default interactive shell"
-	arch-chroot /mnt su "$USER_NAME" <<- EOF
-		expect <<- PASS
-			spawn chsh -s /usr/bin/zsh
-			expect "Password: "
-			send "$USER_PASSWORD\r"
-			expect eof
-		PASS
-	EOF
-
-	infobox "Removing bash files at /home/$USER_NAME"
-	rm /mnt/home/$USER_NAME/.bash*
-
-	complete_steps setup_zsh
-}
-
 doas_config() {
 	infobox "Giving super-user permissions to '$USER_NAME'"
 	echo "permit $USER_NAME as root" > /mnt/etc/doas.conf
@@ -426,6 +409,23 @@ install_st() {
 	complete_steps install_st
 }
 
+setup_fish() {
+	infobox "Setting fish as the default interactive shell"
+	arch-chroot /mnt su "$USER_NAME" <<- EOF
+		expect <<- PASS
+			spawn chsh -s /usr/bin/fish
+			expect "Password: "
+			send "$USER_PASSWORD\r"
+			expect eof
+		PASS
+	EOF
+
+	infobox "Removing bash files at /home/$USER_NAME"
+	rm /mnt/home/$USER_NAME/.bash*
+
+	complete_steps setup_fish
+}
+
 post_install() {
 	infobox "Enabling NetworkManager service"
 	arch-chroot /mnt systemctl enable NetworkManager
@@ -460,12 +460,12 @@ root_password
 create_user
 hostname
 install_rice_packages
-setup_zsh
 doas_config
 install_paru
 install_aur_packages
 deploy_dotfiles
 install_st
+setup_fish
 post_install
 
 infobox "Installation finished! you might remove the installation media and reboot now"

@@ -85,8 +85,7 @@ The following packages are the ones that makes the system usable as a daily driv
 - [`sxhkd`](https://archlinux.org/packages/community/x86_64/sxhkd/) - Simple X hotkey daemon
 - [`xdo`](https://archlinux.org/packages/community/x86_64/xdo/) - Utility for performing actions on windows in X
 - [`base-devel`](https://archlinux.org/groups/x86_64/base-devel/) - Tools needed for building (compiling and linking)
-- [`zsh`](https://archlinux.org/packages/extra/x86_64/zsh/) - A very advanced and programmable command interpreter (shell) for UNIX
-- [`zsh-completions`](https://archlinux.org/packages/community/any/zsh-completions/) - Additional completion definitions for Zsh
+- [`fish`](https://archlinux.org/packages/community/x86_64/fish/) - Smart and user friendly shell intended mostly for interactive use
 - [`scrot`](https://archlinux.org/packages/community/x86_64/scrot/) - Simple command-line screenshot utility for X
 - [`fzf`](https://archlinux.org/packages/community/x86_64/fzf/) - Command-line fuzzy finder
 - [`dunst`](https://archlinux.org/packages/community/x86_64/dunst/) - Customizable and lightweight notification-daemon
