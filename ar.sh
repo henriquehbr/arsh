@@ -409,6 +409,29 @@ install_st() {
 	complete_steps install_st
 }
 
+dash_as_bin_sh() {
+    infobox "Relinking /bin/sh to dash"
+    arch-chroot /mnt ln -sfT dash /usr/bin/sh
+
+    infobox "Creating pacman hook to prevent rewriting /bin/sh symlink"
+    sed -i -E "s/#HookDir[ ]+=[ ]+/HookDir = /" /mnt/etc/pacman.conf
+    mkdir -p /mnt/home/$USER_NAME/.local/share/pacman
+
+    cat <<- EOF /mnt/home/$USER_NAME/.local/share/pacman/hooks
+        [Trigger]
+        Type = Package
+        Operation = Install
+        Operation = Upgrade
+        Target = bash
+
+        [Action]
+        Description = Re-pointing /bin/sh symlink to dash...
+        When = PostTransaction
+        Exec = /usr/bin/ln -sfT dash /usr/bin/sh
+        Depends = dash
+	EOF
+}
+
 setup_fish() {
 	infobox "Removing bash files at /home/$USER_NAME"
 	rm /mnt/home/$USER_NAME/.bash*
@@ -458,6 +481,7 @@ install_paru
 install_aur_packages
 deploy_dotfiles
 install_st
+dash_as_bin_sh
 setup_fish
 post_install
 
