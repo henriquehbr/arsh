@@ -417,7 +417,7 @@ dash_as_bin_sh() {
     sed -i -E "s/#HookDir[ ]+=[ ]+/HookDir = /" /mnt/etc/pacman.conf
     mkdir -p /mnt/home/$USER_NAME/.local/share/pacman
 
-    cat <<- EOF /mnt/home/$USER_NAME/.local/share/pacman/hooks
+    cat <<- EOF /mnt/home/$USER_NAME/.local/share/pacman/hooks/dashbinsh.hook
         [Trigger]
         Type = Package
         Operation = Install
