@@ -410,18 +410,11 @@ install_st() {
 }
 
 setup_fish() {
-	infobox "Setting fish as the default interactive shell"
-	arch-chroot /mnt su "$USER_NAME" <<- EOF
-		expect <<- PASS
-			spawn chsh -s /usr/bin/fish
-			expect "Password: "
-			send "$USER_PASSWORD\r"
-			expect eof
-		PASS
-	EOF
-
 	infobox "Removing bash files at /home/$USER_NAME"
 	rm /mnt/home/$USER_NAME/.bash*
+
+    infobox "Setting fish as the default interactive shell"
+    echo exec fish > /mnt/home/$USER_NAME/.bashrc
 
 	complete_steps setup_fish
 }
