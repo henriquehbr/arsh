@@ -460,6 +460,7 @@ post_install() {
 
 clear
 
+# basic installation
 check_variables
 welcome
 create_passwords
@@ -469,6 +470,7 @@ mirrors
 install_base_packages
 generate_filesystem_table
 bootloader
+# extra steps
 keymap
 timezone
 locales
