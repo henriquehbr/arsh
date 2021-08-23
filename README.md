@@ -90,6 +90,7 @@ The following packages are the ones that makes the system usable as a daily driv
 - [`fzf`](https://archlinux.org/packages/community/x86_64/fzf/) - Command-line fuzzy finder
 - [`dunst`](https://archlinux.org/packages/community/x86_64/dunst/) - Customizable and lightweight notification-daemon
 - [`libnotify`](https://archlinux.org/packages/extra/x86_64/libnotify/) - Library for sending desktop notifications
+- [`brightnessctl`](https://archlinux.org/packages/community/x86_64/brightnessctl/) - Lightweight brightness control tool
 
 #### AUR
 
