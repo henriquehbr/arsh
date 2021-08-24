@@ -432,16 +432,6 @@ dash_as_bin_sh() {
 	EOF
 }
 
-setup_fish() {
-	infobox "Removing bash files at /home/$USER_NAME"
-	rm /mnt/home/$USER_NAME/.bash*
-
-    infobox "Setting fish as the default interactive shell"
-    echo exec fish > /mnt/home/$USER_NAME/.bashrc
-
-	complete_steps setup_fish
-}
-
 post_install() {
 	infobox "Enabling NetworkManager service"
 	arch-chroot /mnt systemctl enable NetworkManager
@@ -484,7 +474,6 @@ install_aur_packages
 deploy_dotfiles
 install_st
 dash_as_bin_sh
-setup_fish
 post_install
 
 infobox "Installation finished! you might remove the installation media and reboot now"
