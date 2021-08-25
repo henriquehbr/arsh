@@ -412,12 +412,16 @@ install_st() {
 dash_as_bin_sh() {
     infobox "Relinking /bin/sh to dash"
     arch-chroot /mnt ln -sfT dash /usr/bin/sh
+    hook_dir="/mnt/home/$USER_NAME/.local/share/pacman/hooks"
 
-    infobox "Creating pacman hook to prevent rewriting /bin/sh symlink"
-    sed -i -E "s/#HookDir[ ]+=[ ]+/HookDir = /" /mnt/etc/pacman.conf
-    mkdir -p /mnt/home/$USER_NAME/.local/share/pacman
+    infobox "Changing pacman default hook directory to ${hook_dir#/mnt}"
+    sed -i -E "s|#HookDir[ ]+=[ \w.\/]+|HookDir = $hook_dir|" /mnt/etc/pacman.conf
 
-    cat <<- EOF /mnt/home/$USER_NAME/.local/share/pacman/hooks/dashbinsh.hook
+    infobox "Creating pacman hook to prevent rewriting '/bin/sh' symlink"
+    mkdir -p "$hook_dir"
+    touch "$hoor_dir/dashbinsh.hook"
+
+    cat <<- EOF "$hook_dir/dashbinsh.hook"
         [Trigger]
         Type = Package
         Operation = Install
