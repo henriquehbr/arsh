@@ -91,6 +91,8 @@ The following packages are the ones that makes the system usable as a daily driv
 - [`dunst`](https://archlinux.org/packages/community/x86_64/dunst/) - Customizable and lightweight notification-daemon
 - [`libnotify`](https://archlinux.org/packages/extra/x86_64/libnotify/) - Library for sending desktop notifications
 - [`brightnessctl`](https://archlinux.org/packages/community/x86_64/brightnessctl/) - Lightweight brightness control tool
+- [`slock`](https://archlinux.org/packages/community/x86_64/slock/) - A simple screen locker for X
+- [`xautolock`](https://archlinux.org/packages/community/x86_64/xautolock/) - An automatic X screen-locker/screen-saver
 
 #### AUR
 
