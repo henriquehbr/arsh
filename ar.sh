@@ -436,6 +436,14 @@ dash_as_bin_sh() {
 	EOF
 }
 
+install_fish_plugins() {
+    # DISPLAY=0 will prevent Xorg from running
+    infobox "Installing fish plugins with fisher"
+    DISPLAY=0 arch-chroot /mnt su hbr -s /usr/bin/fish -c "fisher update"
+
+    complete_steps install_fish_plugins
+}
+
 post_install() {
 	infobox "Enabling NetworkManager service"
 	arch-chroot /mnt systemctl enable NetworkManager
@@ -478,6 +486,7 @@ install_aur_packages
 deploy_dotfiles
 install_st
 dash_as_bin_sh
+install_fish_plugins
 post_install
 
 infobox "Installation finished! you might remove the installation media and reboot now"
