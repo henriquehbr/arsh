@@ -419,7 +419,7 @@ dash_as_bin_sh() {
 
     infobox "Creating pacman hook to prevent rewriting '/bin/sh' symlink"
     mkdir -p "$hook_dir"
-    touch "$hoor_dir/dashbinsh.hook"
+    touch "$hook_dir/dashbinsh.hook"
 
     cat <<- EOF "$hook_dir/dashbinsh.hook"
         [Trigger]
