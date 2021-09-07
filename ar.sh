@@ -97,6 +97,11 @@ doas_prompt() {
 	EOF
 }
 
+run_on_fish() {
+    command=$1
+    DISPLAY=0 arch-chroot /mnt su "$USER_NAME" -s /usr/bin/fish -c "$command"
+}
+
 # ========== Core ==========
 
 check_variables() {
@@ -439,7 +444,7 @@ dash_as_bin_sh() {
 install_fish_plugins() {
     # DISPLAY=0 will prevent Xorg from running
     infobox "Installing fish plugins with fisher"
-    DISPLAY=0 arch-chroot /mnt su hbr -s /usr/bin/fish -c "fisher update"
+    run_on_fish "fisher update"
 
     complete_steps install_fish_plugins
 }
