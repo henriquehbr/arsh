@@ -99,7 +99,7 @@ doas_prompt() {
 }
 
 run_on_fish() {
-    command=$1
+    command=$@
     DISPLAY=0 arch-chroot /mnt su "$USER_NAME" -s /usr/bin/fish -c "$command"
 }
 
@@ -445,21 +445,21 @@ dash_as_bin_sh() {
 install_fish_plugins() {
     # DISPLAY=0 will prevent Xorg from running
     infobox "Installing fish plugins with fisher"
-    run_on_fish "fisher update"
+    run_on_fish fisher update
 
     complete_steps install_fish_plugins
 }
 
 install_nodejs() {
     infobox "Installing latest version of nodejs and npm"
-    run_on_fish "nvm install latest"
+    run_on_fish nvm install latest
 
     complete_steps install_nodejs
 }
 
 install_nvim_language_servers() {
     infobox "Installing neovim language servers"
-    run_on_fish "npm i -g $neovim_language_servers"
+    run_on_fish npm i -g $neovim_language_servers
 
     complete_steps install_nvim_language_servers
 }
