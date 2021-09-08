@@ -450,6 +450,13 @@ install_fish_plugins() {
     complete_steps install_fish_plugins
 }
 
+install_nodejs() {
+    infobox "Installing latest version of nodejs and npm"
+    run_on_fish "nvm install latest"
+
+    complete_steps install_nodejs
+}
+
 install_nvim_language_servers() {
     infobox "Installing neovim language servers"
     run_on_fish "npm i -g $neovim_language_servers"
@@ -498,6 +505,7 @@ deploy_dotfiles
 install_st
 dash_as_bin_sh
 install_fish_plugins
+install_nodejs
 install_nvim_language_servers
 post_install
 
