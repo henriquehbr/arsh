@@ -460,6 +460,8 @@ install_nodejs() {
 install_nvim_language_servers() {
     infobox "Installing neovim language servers"
     run_on_fish "npm i -g $neovim_language_servers"
+
+    complete_steps install_nvim_language_servers
 }
 
 post_install() {
