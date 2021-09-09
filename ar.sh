@@ -454,6 +454,8 @@ install_fish_plugins() {
 
 install_nodejs() {
     infobox "Installing latest version of nodejs and npm"
+    # FIXME: manually creates nvm.fish directory (jorgebucaran/nvm.fish#161)
+    arch-chroot /mnt su "$USER_NAME" -c "mkdir -p \$HOME/.local/share/nvm"
     run_on_fish nvm install latest
 
     complete_steps install_nodejs
