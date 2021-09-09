@@ -440,6 +440,8 @@ dash_as_bin_sh() {
         Exec = /usr/bin/ln -sfT dash /usr/bin/sh
         Depends = dash
 	EOF
+
+    complete_steps dash_as_bin_sh
 }
 
 install_fish_plugins() {
