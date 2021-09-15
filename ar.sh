@@ -39,7 +39,7 @@ root_partition=/dev/sda3
 
 base_packages="base linux linux-firmware grub efibootmgr networkmanager dash $cpu_package"
 rice_packages="git neovim unzip opendoas xorg-xauth sx dmenu pulseaudio alsa-utils inotify-tools reflector expect xorg bspwm sxhkd xdo base-devel fish scrot fzf dunst libnotify brightnessctl slock xautolock"
-aur_packages="lemonbar-xft-git brave-bin"
+aur_packages="lemonbar-xft-git vieb-bin"
 neovim_language_servers="vscode-langservers-extracted"
 
 # ========== Functions ==========
